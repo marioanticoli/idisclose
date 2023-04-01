@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idisclose-db
+spec:
+  selector:
+    matchLabels:
+      app: idisclose-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: idisclose-db
+    spec:
+      containers:
+        - name: idisclose-db
+          image: postgres:13
+          ports:
+            - containerPort: 5432
+              name: "postgres"
+          volumeMounts:
+            - mountPath: "/var/lib/postgresql/data"
+              name: idisclose-postgres-data-storage
+          env:
+            - name: POSTGRES_DB
+              value: postgres_prod
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+          resources:
+            limits:
+              memory: 4Gi
+              cpu: "2"
+      volumes:
+        - name: idisclose-postgres-data-storage
+          persistentVolumeClaim:
+            claimName: idisclose-postgres-data-persisent-volume-claim

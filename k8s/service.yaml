@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idisclose
+spec:
+  selector:
+    matchLabels:
+      app: idisclose
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: idisclose
+    spec:
+      containers:
+        - name: idisclose
+          image: marioanticoli/idisclose
+          ports:
+            - containerPort: 4000
+              name: "http"
+            #- containerPort: 4001
+              #name: "https"
+          #env:
+            #- name: POSTGRES_DB
+              #value: postgres_prod
+            #- name: POSTGRES_USER
+              #value: postgres
+            #- name: POSTGRES_PASSWORD
+              #value: postgres
+            #- name: CUSTOMCONNSTR_VehicleQuotesContext
+              #value: Host=$(VEHICLE_QUOTES_DB_SERVICE_SERVICE_HOST);Database=$(POSTGRES_DB);Username=$(POSTGRES_USER);Password=$(POSTGRES_PASSWORD)
+          resources:
+            limits:
+              memory: 2Gi
+              cpu: "1"
+      volumes:
+      - name: configs
+        secret:
+          secretName: dev-secret

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idisclose-deployment
+  labels:
+    app: idisclose 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: idisclose 
+  template:
+    metadata:
+      labels:
+        app: idisclose
+    spec:
+      containers:
+      - name: idisclose 
+        image: marioanticoli/idisclose
+        ports:
+        - containerPort: 4000
+

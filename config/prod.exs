@@ -19,3 +19,23 @@ config :logger, level: :info
 
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
+
+########################
+# Clustering
+########################
+
+# K8_SELECTOR="service=idisclose"
+
+config :libcluster,
+  topologies: [
+    k8s: [
+      # maybe switch to Elixir.Cluster.Strategy.Kubernetes.DNS
+      strategy: Elixir.Cluster.Strategy.Kubernetes,
+      config: [
+        mode: :dns,
+        kubernetes_node_basename: "app-endpoint",
+        kubernetes_selector: System.fetch_env!("K8_SELECTOR"),
+        polling_interval: 10_000
+      ]
+    ]
+  ]

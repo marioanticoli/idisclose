@@ -17,9 +17,10 @@ defmodule Idisclose.Application do
       # Start Finch
       {Finch, name: Idisclose.Finch},
       # Start the Endpoint (http/https)
-      IdiscloseWeb.Endpoint
+      IdiscloseWeb.Endpoint,
       # Start a worker by calling: Idisclose.Worker.start_link(arg)
       # {Idisclose.Worker, arg}
+      cluster_child()
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -34,5 +35,10 @@ defmodule Idisclose.Application do
   def config_change(changed, _new, removed) do
     IdiscloseWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  defp cluster_child do
+    topologies = Application.get_env(:libcluster, :topologies, [])
+    {Cluster.Supervisor, [topologies, [name: ItineraryCore.ClusterSupervisor]]}
   end
 end

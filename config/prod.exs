@@ -24,8 +24,6 @@ config :logger, level: :info
 # Clustering
 ########################
 
-# K8_SELECTOR="service=idisclose"
-
 config :libcluster,
   topologies: [
     k8s: [
@@ -34,7 +32,7 @@ config :libcluster,
       config: [
         mode: :dns,
         kubernetes_node_basename: "app-endpoint",
-        kubernetes_selector: System.fetch_env!("K8_SELECTOR"),
+        kubernetes_selector: System.get_env("K8_SELECTOR", "service=idisclose"),
         polling_interval: 10_000
       ]
     ]

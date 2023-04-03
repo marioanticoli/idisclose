@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: idisclose-web
+spec:
+  selector:
+    matchLabels:
+      app: idisclose-web
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: idisclose-web
+    spec:
+      containers:
+        - name: idisclose-web
+          image: marioanticoli/idisclose
+          ports:
+            - containerPort: 4000
+              name: "http"
+            #- containerPort: 4001
+              #name: "https"
+          env:
+            - name: POSTGRES_DB                                                                                                                                   
+              value: postgres_prod
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: prod-secret
+                  key: db_user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: prod-secret
+                  key: db_password
+            - name: DATABASE_URL
+              value: ecto://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(IDISCLOSE_DB_SERVICE_SERVICE_HOST)/$(POSTGRES_DB)
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: prod-secret 
+                  key: secret-cookie
+          resources:
+            limits:
+              memory: 2Gi
+              cpu: "1"

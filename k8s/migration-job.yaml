@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrations
+  labels:
+    app: migrations
+spec:
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 100
+  template:
+    metadata:
+      labels:
+        app: migrations
+    spec:
+      containers:
+      - name: migrations
+        image: marioanticoli/idisclose-migration
+        imagePullPolicy: Always
+        env:
+          - name: POSTGRES_DB                                                                                                                                   
+            value: postgres_prod
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: prod-secret
+                key: db_user
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: prod-secret
+                key: db_password
+          - name: DATABASE_URL
+            value: ecto://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(IDISCLOSE_DB_SERVICE_SERVICE_HOST)/$(POSTGRES_DB)
+          - name: SECRET_KEY_BASE
+            valueFrom:
+              secretKeyRef:
+                name: prod-secret 
+                key: secret-cookie
+      restartPolicy: Never

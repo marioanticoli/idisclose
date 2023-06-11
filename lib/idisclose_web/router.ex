@@ -18,6 +18,17 @@ defmodule IdiscloseWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    # Templates
+    live "/templates", TemplateLive.Index, :index
+    live "/templates/new", TemplateLive.Index, :new
+    live "/templates/:id/edit", TemplateLive.Index, :edit
+
+    live "/templates/:id", TemplateLive.Show, :show
+    live "/templates/:id/show/edit", TemplateLive.Show, :edit
+
+    # Sections 
+
   end
 
   # Other scopes may use custom stacks.

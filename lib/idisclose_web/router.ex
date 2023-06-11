@@ -28,7 +28,12 @@ defmodule IdiscloseWeb.Router do
     live "/templates/:id/show/edit", TemplateLive.Show, :edit
 
     # Sections 
+    live "/sections", SectionLive.Index, :index
+    live "/sections/new", SectionLive.Index, :new
+    live "/sections/:id/edit", SectionLive.Index, :edit
 
+    live "/sections/:id", SectionLive.Show, :show
+    live "/sections/:id/show/edit", SectionLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.

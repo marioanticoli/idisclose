@@ -1,0 +1,28 @@
+<.header>
+  Section <%= @section.id %>
+  <:subtitle>This is a section record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/sections/#{@section}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit section</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Title"><%= @section.title %></:item>
+  <:item title="Body"><%= @section.body %></:item>
+  <:item title="Description"><%= @section.description %></:item>
+</.list>
+
+<.back navigate={~p"/sections"}>Back to sections</.back>
+
+<.modal :if={@live_action == :edit} id="section-modal" show on_cancel={JS.patch(~p"/sections/#{@section}")}>
+  <.live_component
+    module={IdiscloseWeb.SectionLive.FormComponent}
+    id={@section.id}
+    title={@page_title}
+    action={@live_action}
+    section={@section}
+    patch={~p"/sections/#{@section}"}
+  />
+</.modal>

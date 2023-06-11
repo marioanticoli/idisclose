@@ -18,4 +18,20 @@ defmodule Idisclose.DocumentsFixtures do
 
     template
   end
+
+  @doc """
+  Generate a section.
+  """
+  def section_fixture(attrs \\ %{}) do
+    {:ok, section} =
+      attrs
+      |> Enum.into(%{
+        body: "some body",
+        description: "some description",
+        title: "some title"
+      })
+      |> Idisclose.Documents.create_section()
+
+    section
+  end
 end

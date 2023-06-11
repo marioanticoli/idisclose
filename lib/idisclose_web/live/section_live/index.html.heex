@@ -1,0 +1,43 @@
+<.header>
+  Listing Sections
+  <:actions>
+    <.link patch={~p"/sections/new"}>
+      <.button>New Section</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="sections"
+  rows={@streams.sections}
+  row_click={fn {_id, section} -> JS.navigate(~p"/sections/#{section}") end}
+>
+  <:col :let={{_id, section}} label="Title"><%= section.title %></:col>
+  <:col :let={{_id, section}} label="Body"><%= section.body %></:col>
+  <:col :let={{_id, section}} label="Description"><%= section.description %></:col>
+  <:action :let={{_id, section}}>
+    <div class="sr-only">
+      <.link navigate={~p"/sections/#{section}"}>Show</.link>
+    </div>
+    <.link patch={~p"/sections/#{section}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, section}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: section.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="section-modal" show on_cancel={JS.patch(~p"/sections")}>
+  <.live_component
+    module={IdiscloseWeb.SectionLive.FormComponent}
+    id={@section.id || :new}
+    title={@page_title}
+    action={@live_action}
+    section={@section}
+    patch={~p"/sections"}
+  />
+</.modal>

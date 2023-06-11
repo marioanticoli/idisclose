@@ -5,7 +5,7 @@ defmodule IdiscloseWeb.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, {IdiscloseWeb.Layouts, :root}
+    plug :put_root_layout, html: {IdiscloseWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -25,7 +25,7 @@ defmodule IdiscloseWeb.Router do
   #   pipe_through :api
   # end
 
-  # Enable LiveDashboard and Swoosh mailbox preview in development
+  # Enable LiveDashboard in development
   if Application.compile_env(:idisclose, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
     # it behind authentication and allow only admins to access it.
@@ -38,7 +38,6 @@ defmodule IdiscloseWeb.Router do
       pipe_through :browser
 
       live_dashboard "/dashboard", metrics: IdiscloseWeb.Telemetry
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end
 end

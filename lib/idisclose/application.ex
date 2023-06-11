@@ -14,8 +14,6 @@ defmodule Idisclose.Application do
       Idisclose.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: Idisclose.PubSub},
-      # Start Finch
-      {Finch, name: Idisclose.Finch},
       # Start the Endpoint (http/https)
       IdiscloseWeb.Endpoint,
       # Start a worker by calling: Idisclose.Worker.start_link(arg)

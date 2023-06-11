@@ -7,7 +7,7 @@ defmodule IdiscloseWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_idisclose_key",
-    signing_salt: "bFUZI3Az",
+    signing_salt: "8HzNdSnS",
     same_site: "Lax"
   ]
 

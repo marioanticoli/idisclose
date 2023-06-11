@@ -47,7 +47,15 @@ defmodule Idisclose.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      # clustering capabilities
+      {:libcluster, "~> 3.3"},
+      # static analysis - discrepancies
+      {:dialyxir, "~> 1.3", only: [:dev], runtime: false},
+      # static analysis - guidelines
+      {:credo, "~> 1.7"},
+      # static analysis - security
+      {:sobelow, "~> 0.12.2"}
     ]
   end
 

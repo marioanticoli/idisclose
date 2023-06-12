@@ -5,7 +5,11 @@ defmodule IdiscloseWeb.SectionLiveTest do
   import Idisclose.DocumentsFixtures
 
   @create_attrs %{body: "some body", description: "some description", title: "some title"}
-  @update_attrs %{body: "some updated body", description: "some updated description", title: "some updated title"}
+  @update_attrs %{
+    body: "some updated body",
+    description: "some updated description",
+    title: "some updated title"
+  }
   @invalid_attrs %{body: nil, description: nil, title: nil}
 
   defp create_section(_) do

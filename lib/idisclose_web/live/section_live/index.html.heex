@@ -31,7 +31,12 @@
   </:action>
 </.table>
 
-<.modal :if={@live_action in [:new, :edit]} id="section-modal" show on_cancel={JS.patch(~p"/sections")}>
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="section-modal"
+  show
+  on_cancel={JS.patch(~p"/sections")}
+>
   <.live_component
     module={IdiscloseWeb.SectionLive.FormComponent}
     id={@section.id || :new}

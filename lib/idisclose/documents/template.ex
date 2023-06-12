@@ -2,7 +2,7 @@ defmodule Idisclose.Documents.Template do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Idisclose.Documents.Section
+  alias Idisclose.Documents.{Section, SectionTemplate}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -11,15 +11,18 @@ defmodule Idisclose.Documents.Template do
     field(:name, :string)
 
     # establish an n-to-m relationship through sections_templates table
-    many_to_many(:sections, Section, join_through: "sections_templates", on_replace: :delete)
+    many_to_many(:sections, Section, join_through: SectionTemplate, on_replace: :delete)
 
     timestamps()
   end
 
   @doc false
-  def changeset(template, attrs) do
+  # Pattern match variable template to be a struct Idisclose.Documents.Template, if it's not passed create an empty one
+  def changeset(%__MODULE__{} = template \\ %__MODULE__{}, attrs) do
+    required_fields = [:name, :description]
+
     template
-    |> cast(attrs, [:name, :description])
-    |> validate_required([:name, :description])
+    |> cast(attrs, required_fields)
+    |> validate_required(required_fields)
   end
 end

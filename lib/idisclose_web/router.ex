@@ -26,6 +26,7 @@ defmodule IdiscloseWeb.Router do
 
     live("/templates/:id", TemplateLive.Show, :show)
     live("/templates/:id/show/edit", TemplateLive.Show, :edit)
+    live("/templates/:id/section", TemplateLive.Show, :new_assoc)
 
     # Sections 
     live("/sections", SectionLive.Index, :index)

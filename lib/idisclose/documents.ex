@@ -20,8 +20,7 @@ defmodule Idisclose.Documents do
 
   """
   def list_templates do
-    query_preload(Template, [:sections])
-    |> Repo.all()
+    Template |> Repo.all() |> Repo.preload([:sections])
   end
 
   @doc """
@@ -39,16 +38,18 @@ defmodule Idisclose.Documents do
 
   """
   def get_template(id) do
+    Template |> Repo.get(id) |> Repo.preload([:sections])
+
     # Queries are composable, it means I can build one bit by bit 
 
     # This would fetch all templates with preloaded sections
-    query_preload(Template, [:sections])
+    # query_preload(Template, [:sections])
     # apply where to filter by ID
-    |> where([m], m.id == ^id)
+    # |> where([m], m.id == ^id)
     # limit to speed up the query
-    |> limit(1)
+    # |> limit(1)
     # actually execute the query
-    |> Repo.one()
+    # |> Repo.one()
   end
 
   @doc """
@@ -153,6 +154,19 @@ defmodule Idisclose.Documents do
   end
 
   @doc """
+  Returns the list of sections not associated to a given template.
+
+  ## Examples
+
+      iex> list_sections_not_associated(sectiond_ids)
+      [%Section{}, ...]
+
+  """
+  def list_sections_not_associated(section_ids) when is_list(section_ids) do
+    from(s in Section, where: s.id not in ^section_ids) |> Repo.all()
+  end
+
+  @doc """
   Gets a single section.
 
   Raises `Ecto.NoResultsError` if the Section does not exist.
@@ -233,15 +247,50 @@ defmodule Idisclose.Documents do
     Section.changeset(section, attrs)
   end
 
-  # This private functions allows me to pass any schema and a list of desired preloads and returns a query
-  defp query_preload(module, associations) when is_list(associations) do
-    query =
-      from(m in module,
-        # preload loads the associations as if they were actual fields of the record
-        preload: ^associations
-      )
+  alias Idisclose.Documents.SectionTemplate
 
-    # reduce the associations into a single query applying a series of left join to ensures all is done in a single query
-    Enum.reduce(associations, query, &join(&2, :left, [q], a in assoc(q, ^&1)))
+  @doc """
+  Creates a template.
+
+  ## Examples
+
+      iex> create_section_template(%{field: value})
+      {:ok, %SectionTemplate{}}
+
+      iex> create_section_template(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_section_template(attrs \\ %{}) do
+    %SectionTemplate{}
+    |> SectionTemplate.changeset(attrs)
+    |> Repo.insert()
   end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking section template changes.
+
+  ## Examples
+
+      iex> change_section_template(section_template)
+      %Ecto.Changeset{data: %SectionTemplate{}}
+
+  """
+  def change_section_template(%SectionTemplate{} = section_template, attrs \\ %{}) do
+    SectionTemplate.changeset(section_template, attrs)
+  end
+
+  # This private functions allows me to pass any schema and a list of desired preloads and returns a query
+  # defp query_preload(module, associations) when is_list(associations) do
+  # query =
+  # from(m in module,
+  ## preload loads the associations as if they were actual fields of the record
+  # preload: ^associations,
+  ## TODO: check if I can do something on the schema side
+  # distinct: m
+  # )
+
+  ## reduce the associations into a single query applying a series of left join to ensures all is done in a single query
+  # Enum.reduce(associations, query, &join(&2, :left, [q], a in assoc(q, ^&1)))
+  # end
 end

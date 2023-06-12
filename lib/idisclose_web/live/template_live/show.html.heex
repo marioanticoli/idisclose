@@ -1,21 +1,34 @@
 <.header>
-  Template <%= @template.id %>
-  <:subtitle>This is a template record from your database.</:subtitle>
+  <%= @template.name %>
+  <:subtitle><%= @template.description %></:subtitle>
   <:actions>
     <.link patch={~p"/templates/#{@template}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit template</.button>
     </.link>
   </:actions>
+  <:actions>
+    <.link patch={~p"/templates/#{@template}/section"} phx-click={JS.push_focus()}>
+      <.button>Associate section</.button>
+    </.link>
+  </:actions>
 </.header>
 
 <.list>
-  <:item title="Name"><%= @template.name %></:item>
-  <:item title="Description"><%= @template.description %></:item>
+  <:item :for={section <- @template.sections} title="Section">
+    <.link navigate={~p"/sections/#{section}"}>
+      <%= section.title %>
+    </.link>
+  </:item>
 </.list>
 
 <.back navigate={~p"/templates"}>Back to templates</.back>
 
-<.modal :if={@live_action == :edit} id="template-modal" show on_cancel={JS.patch(~p"/templates/#{@template}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="template-modal"
+  show
+  on_cancel={JS.patch(~p"/templates/#{@template}")}
+>
   <.live_component
     module={IdiscloseWeb.TemplateLive.FormComponent}
     id={@template.id}
@@ -23,5 +36,22 @@
     action={@live_action}
     template={@template}
     patch={~p"/templates/#{@template}"}
+  />
+</.modal>
+
+<.modal
+  :if={@live_action == :new_assoc}
+  id="section-template-modal"
+  show
+  on_cancel={JS.patch(~p"/templates/#{@template}")}
+>
+  <.live_component
+    module={IdiscloseWeb.TemplateLive.FormComponent}
+    id={@template.id}
+    title={@page_title}
+    action={@live_action}
+    template={@template}
+    sections={@sections}
+    patch={~p"/templates/#{@template}/section"}
   />
 </.modal>

@@ -91,7 +91,12 @@ defmodule Idisclose.DocumentsTest do
 
     test "update_section/2 with valid data updates the section" do
       section = section_fixture()
-      update_attrs = %{body: "some updated body", description: "some updated description", title: "some updated title"}
+
+      update_attrs = %{
+        body: "some updated body",
+        description: "some updated description",
+        title: "some updated title"
+      }
 
       assert {:ok, %Section{} = section} = Documents.update_section(section, update_attrs)
       assert section.body == "some updated body"

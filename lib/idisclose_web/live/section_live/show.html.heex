@@ -16,7 +16,12 @@
 
 <.back navigate={~p"/sections"}>Back to sections</.back>
 
-<.modal :if={@live_action == :edit} id="section-modal" show on_cancel={JS.patch(~p"/sections/#{@section}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="section-modal"
+  show
+  on_cancel={JS.patch(~p"/sections/#{@section}")}
+>
   <.live_component
     module={IdiscloseWeb.SectionLive.FormComponent}
     id={@section.id}

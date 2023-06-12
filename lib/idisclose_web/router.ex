@@ -2,38 +2,38 @@ defmodule IdiscloseWeb.Router do
   use IdiscloseWeb, :router
 
   pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, html: {IdiscloseWeb.Layouts, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:put_root_layout, html: {IdiscloseWeb.Layouts, :root})
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug(:accepts, ["json"])
   end
 
   scope "/", IdiscloseWeb do
-    pipe_through :browser
+    pipe_through(:browser)
 
-    get "/", PageController, :home
+    get("/", PageController, :home)
 
     # Templates
-    live "/templates", TemplateLive.Index, :index
-    live "/templates/new", TemplateLive.Index, :new
-    live "/templates/:id/edit", TemplateLive.Index, :edit
+    live("/templates", TemplateLive.Index, :index)
+    live("/templates/new", TemplateLive.Index, :new)
+    live("/templates/:id/edit", TemplateLive.Index, :edit)
 
-    live "/templates/:id", TemplateLive.Show, :show
-    live "/templates/:id/show/edit", TemplateLive.Show, :edit
+    live("/templates/:id", TemplateLive.Show, :show)
+    live("/templates/:id/show/edit", TemplateLive.Show, :edit)
 
     # Sections 
-    live "/sections", SectionLive.Index, :index
-    live "/sections/new", SectionLive.Index, :new
-    live "/sections/:id/edit", SectionLive.Index, :edit
+    live("/sections", SectionLive.Index, :index)
+    live("/sections/new", SectionLive.Index, :new)
+    live("/sections/:id/edit", SectionLive.Index, :edit)
 
-    live "/sections/:id", SectionLive.Show, :show
-    live "/sections/:id/show/edit", SectionLive.Show, :edit
+    live("/sections/:id", SectionLive.Show, :show)
+    live("/sections/:id/show/edit", SectionLive.Show, :edit)
   end
 
   # Other scopes may use custom stacks.
@@ -51,9 +51,9 @@ defmodule IdiscloseWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through :browser
+      pipe_through(:browser)
 
-      live_dashboard "/dashboard", metrics: IdiscloseWeb.Telemetry
+      live_dashboard("/dashboard", metrics: IdiscloseWeb.Telemetry)
     end
   end
 end

@@ -31,6 +31,7 @@ defmodule LibCluster.LocalStrategy do
   def convert_to_nodes(node_binary_list) do
     node_binary_list
     |> String.split(",")
+    # TODO: maybe String.to_existing_atom/1
     |> Enum.map(&String.to_atom/1)
   end
 end

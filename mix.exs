@@ -9,7 +9,9 @@ defmodule Idisclose.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      # Make Phoenix not compile on warnings
+      elixirc_options: [warnings_as_errors: true]
     ]
   end
 

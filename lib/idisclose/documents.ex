@@ -3,7 +3,9 @@ defmodule Idisclose.Documents do
   The Documents context.
   """
 
-  import Ecto.Query, warn: false
+  # import query functions
+  import Ecto.Query, only: [from: 2, where: 3, join: 4, limit: 2], warn: false
+
   alias Idisclose.Repo
 
   alias Idisclose.Documents.Template
@@ -18,7 +20,35 @@ defmodule Idisclose.Documents do
 
   """
   def list_templates do
-    Repo.all(Template)
+    query_preload(Template, [:sections])
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets a single template.
+
+  Returns nil if the Template does not exist.
+
+  ## Examples
+
+      iex> get_template(123)
+      %Template{}
+
+      iex> get_template(456)
+      nil
+
+  """
+  def get_template(id) do
+    # Queries are composable, it means I can build one bit by bit 
+
+    # This would fetch all templates with preloaded sections
+    query_preload(Template, [:sections])
+    # apply where to filter by ID
+    |> where([m], m.id == ^id)
+    # limit to speed up the query
+    |> limit(1)
+    # actually execute the query
+    |> Repo.one()
   end
 
   @doc """
@@ -35,7 +65,12 @@ defmodule Idisclose.Documents do
       ** (Ecto.NoResultsError)
 
   """
-  def get_template!(id), do: Repo.get!(Template, id)
+  def get_template!(id) do
+    case get_template(id) do
+      %Template{} = template -> template
+      _ -> raise Ecto.NoResultsError
+    end
+  end
 
   @doc """
   Creates a template.
@@ -196,5 +231,17 @@ defmodule Idisclose.Documents do
   """
   def change_section(%Section{} = section, attrs \\ %{}) do
     Section.changeset(section, attrs)
+  end
+
+  # This private functions allows me to pass any schema and a list of desired preloads and returns a query
+  defp query_preload(module, associations) when is_list(associations) do
+    query =
+      from(m in module,
+        # preload loads the associations as if they were actual fields of the record
+        preload: ^associations
+      )
+
+    # reduce the associations into a single query applying a series of left join to ensures all is done in a single query
+    Enum.reduce(associations, query, &join(&2, :left, [q], a in assoc(q, ^&1)))
   end
 end

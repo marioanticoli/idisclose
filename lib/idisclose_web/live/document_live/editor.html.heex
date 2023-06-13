@@ -1,0 +1,8 @@
+<.header>
+  <%= @chapter.title %>
+</.header>
+
+<textarea id="editor" phx-hook="Editor" name={:body}><%= @chapter.body %></textarea>
+<.button id="save-chapter" phx-hook="EditorContent">Save</.button>
+
+<.back navigate={~p"/documents/#{@chapter.document_id}"}>Back to document</.back>

@@ -15,27 +15,107 @@
 //     import "some-package"
 //
 
-// Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
-import "phoenix_html"
-// Establish Phoenix Socket and LiveView configuration.
-import {Socket} from "phoenix"
-import {LiveSocket} from "phoenix_live_view"
-import topbar from "../vendor/topbar"
+let Hooks = {};
 
-let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
+import suneditor from "../vendor/suneditor.min.js";
+import katex from "../vendor/katex.min.js";
+
+let editor;
+
+Hooks.Editor = {
+  mounted() {
+    editor = SUNEDITOR.create(document.getElementById("editor"), {
+      mode: "classic",
+      rtl: false,
+      //fullPage: true,
+      katex: katex,
+      charCounter: true,
+      charCounterLabel: "Chars",
+      width: "auto",
+      minWidth: "300",
+      height: "auto",
+      minHeight: "200",
+      videoFileInput: false,
+      audioUrlInput: false,
+      tabDisable: false,
+      buttonList: [
+        [
+          //"undo",
+          //"redo",
+          "font",
+          "fontSize",
+          "formatBlock",
+          "paragraphStyle",
+          "blockquote",
+          "bold",
+          "underline",
+          "italic",
+          "strike",
+          "subscript",
+          "superscript",
+          "fontColor",
+          "hiliteColor",
+          "textStyle",
+          "removeFormat",
+          "outdent",
+          "indent",
+          "align",
+          "horizontalRule",
+          "list",
+          "lineHeight",
+          "table",
+          "link",
+          "image",
+          "math",
+          //"imageGallery",
+          "fullScreen",
+          "showBlocks",
+          "preview",
+          "save",
+        ],
+      ],
+    });
+  },
+};
+
+Hooks.EditorContent = {
+  mounted() {
+    this.el.addEventListener("click", () => {
+      this.pushEvent(
+        "save_chapter",
+        { body: editor.getContents() },
+        (reply, ref) => {}
+      );
+    });
+  },
+};
+
+// Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
+import "phoenix_html";
+// Establish Phoenix Socket and LiveView configuration.
+import { Socket } from "phoenix";
+import { LiveSocket } from "phoenix_live_view";
+import topbar from "../vendor/topbar";
+
+let csrfToken = document
+  .querySelector("meta[name='csrf-token']")
+  .getAttribute("content");
+//let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
+let liveSocket = new LiveSocket("/live", Socket, {
+  params: { _csrf_token: csrfToken },
+  hooks: Hooks,
+});
 
 // Show progress bar on live navigation and form submits
-topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
-window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
-window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
+topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
+window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));
+window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 
 // connect if there are any LiveViews on the page
-liveSocket.connect()
+liveSocket.connect();
 
 // expose liveSocket on window for web console debug logs and latency simulation:
-// >> liveSocket.enableDebug()
+// >> liveSocket.enableDebug();
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
-window.liveSocket = liveSocket
-
+window.liveSocket = liveSocket;

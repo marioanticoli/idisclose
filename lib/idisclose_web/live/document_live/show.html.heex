@@ -15,7 +15,7 @@
 
 <.list>
   <:item :for={chapter <- @document.chapters} title={"#{chapter.order}. #{chapter.title}"}>
-    <%= chapter.body %>
+    <.link navigate={~p"/documents/#{@document}/chapter/#{chapter}"}>Edit</.link>
   </:item>
 </.list>
 

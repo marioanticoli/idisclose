@@ -11,6 +11,8 @@ defmodule Idisclose.Documents.Section do
     field :description, :string
     field :title, :string
 
+    field :order, :integer, virtual: true
+
     # establish an n-to-m relationship through sections_templates table
     many_to_many :templates, Template, join_through: SectionTemplate, on_replace: :delete
 

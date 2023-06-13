@@ -7,8 +7,7 @@ defmodule Idisclose.Documents do
   import Ecto.Query, only: [from: 2, where: 3, join: 4, limit: 2], warn: false
 
   alias Idisclose.Repo
-
-  alias Idisclose.Documents.Template
+  alias Idisclose.Documents.{Chapter, Document, Section, SectionTemplate, Template}
 
   @doc """
   Returns the list of templates.
@@ -19,8 +18,8 @@ defmodule Idisclose.Documents do
       [%Template{}, ...]
 
   """
-  def list_templates do
-    Template |> Repo.all() |> Repo.preload([:sections])
+  def list_templates(preloads \\ [:sections]) do
+    Template |> Repo.all() |> Repo.preload(preloads)
   end
 
   @doc """
@@ -138,8 +137,6 @@ defmodule Idisclose.Documents do
     Template.changeset(template, attrs)
   end
 
-  alias Idisclose.Documents.Section
-
   @doc """
   Returns the list of sections.
 
@@ -247,8 +244,6 @@ defmodule Idisclose.Documents do
     Section.changeset(section, attrs)
   end
 
-  alias Idisclose.Documents.SectionTemplate
-
   @doc """
   Creates a template.
 
@@ -293,4 +288,231 @@ defmodule Idisclose.Documents do
   ## reduce the associations into a single query applying a series of left join to ensures all is done in a single query
   # Enum.reduce(associations, query, &join(&2, :left, [q], a in assoc(q, ^&1)))
   # end
+
+  @doc """
+  Returns the list of documents.
+
+  ## Examples
+
+      iex> list_documents()
+      [%Document{}, ...]
+
+  """
+  def list_documents(preloads \\ [:template]) do
+    Repo.all(Document) |> Repo.preload(preloads)
+  end
+
+  @doc """
+  Gets a single document.
+
+  Raises `Ecto.NoResultsError` if the Document does not exist.
+
+  ## Examples
+
+      iex> get_document!(123)
+      %Document{}
+
+      iex> get_document!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_document!(id) do
+    from(d in Document,
+      where: d.id == ^id,
+      select: d,
+      preload: [
+        template: :sections,
+        chapters: ^from(c in Chapter, order_by: [asc: c.order])
+      ],
+      limit: 1
+    )
+    |> Repo.one()
+  end
+
+  @doc """
+  Creates a document.
+
+  ## Examples
+
+      iex> create_document(%{field: value})
+      {:ok, %Document{}}
+
+      iex> create_document(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_document(attrs \\ %{}) do
+    %Document{}
+    |> Document.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a document.
+
+  ## Examples
+
+      iex> update_document(document, %{field: new_value})
+      {:ok, %Document{}}
+
+      iex> update_document(document, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_document(%Document{} = document, attrs) do
+    document
+    |> Document.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a document.
+
+  ## Examples
+
+      iex> delete_document(document)
+      {:ok, %Document{}}
+
+      iex> delete_document(document)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_document(%Document{} = document) do
+    Repo.delete(document)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking document changes.
+
+  ## Examples
+
+      iex> change_document(document)
+      %Ecto.Changeset{data: %Document{}}
+
+  """
+  def change_document(%Document{} = document, attrs \\ %{}) do
+    Document.changeset(document, attrs)
+  end
+
+  @doc """
+  Returns the list of chapters.
+
+  ## Examples
+
+      iex> list_chapters()
+      [%Chapter{}, ...]
+
+  """
+  def list_chapters do
+    Repo.all(Chapter)
+  end
+
+  @doc """
+  Gets a single chapter.
+
+  Raises `Ecto.NoResultsError` if the Chapter does not exist.
+
+  ## Examples
+
+      iex> get_chapter!(123)
+      %Chapter{}
+
+      iex> get_chapter!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_chapter!(id), do: Repo.get!(Chapter, id)
+
+  @doc """
+  Creates a chapter.
+
+  ## Examples
+
+      iex> create_chapter(%{field: value})
+      {:ok, %Chapter{}}
+
+      iex> create_chapter(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_chapter(attrs \\ %{}) do
+    %Chapter{}
+    |> Chapter.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a chapter.
+
+  ## Examples
+
+      iex> update_chapter(chapter, %{field: new_value})
+      {:ok, %Chapter{}}
+
+      iex> update_chapter(chapter, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_chapter(%Chapter{} = chapter, attrs) do
+    chapter
+    |> Chapter.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a chapter.
+
+  ## Examples
+
+      iex> delete_chapter(chapter)
+      {:ok, %Chapter{}}
+
+      iex> delete_chapter(chapter)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_chapter(%Chapter{} = chapter) do
+    Repo.delete(chapter)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking chapter changes.
+
+  ## Examples
+
+      iex> change_chapter(chapter)
+      %Ecto.Changeset{data: %Chapter{}}
+
+  """
+  def change_chapter(%Chapter{} = chapter, attrs \\ %{}) do
+    Chapter.changeset(chapter, attrs)
+  end
+
+  def create_document_chapters(%Document{} = document) do
+    section_ids = Enum.map(document.template.sections, & &1.id)
+
+    sections =
+      from(
+        st in SectionTemplate,
+        join: s in assoc(st, :section),
+        where: s.id in ^section_ids,
+        select: %{s | order: st.order}
+      )
+      |> Repo.all()
+
+    Enum.reduce(sections, Ecto.Multi.new(), fn section, multi ->
+      attrs = %{
+        title: section.title,
+        body: section.body,
+        order: section.order,
+        document_id: document.id,
+        section_id: section.id
+      }
+
+      changeset = change_chapter(%Chapter{}, attrs)
+
+      Ecto.Multi.insert(multi, section.id, changeset)
+    end)
+    |> Repo.transaction()
+  end
 end

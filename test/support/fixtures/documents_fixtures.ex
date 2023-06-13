@@ -34,4 +34,34 @@ defmodule Idisclose.DocumentsFixtures do
 
     section
   end
+
+  @doc """
+  Generate a document.
+  """
+  def document_fixture(attrs \\ %{}) do
+    {:ok, document} =
+      attrs
+      |> Enum.into(%{
+        deadline: ~D[2023-06-12],
+        title: "some title"
+      })
+      |> Idisclose.Documents.create_document()
+
+    document
+  end
+
+  @doc """
+  Generate a chapter.
+  """
+  def chapter_fixture(attrs \\ %{}) do
+    {:ok, chapter} =
+      attrs
+      |> Enum.into(%{
+        body: "some body",
+        order: 42
+      })
+      |> Idisclose.Documents.create_chapter()
+
+    chapter
+  end
 end

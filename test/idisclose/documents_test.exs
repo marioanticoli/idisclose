@@ -121,4 +121,116 @@ defmodule Idisclose.DocumentsTest do
       assert %Ecto.Changeset{} = Documents.change_section(section)
     end
   end
+
+  describe "documents" do
+    alias Idisclose.Documents.Document
+
+    import Idisclose.DocumentsFixtures
+
+    @invalid_attrs %{deadline: nil, title: nil}
+
+    test "list_documents/0 returns all documents" do
+      document = document_fixture()
+      assert Documents.list_documents() == [document]
+    end
+
+    test "get_document!/1 returns the document with given id" do
+      document = document_fixture()
+      assert Documents.get_document!(document.id) == document
+    end
+
+    test "create_document/1 with valid data creates a document" do
+      valid_attrs = %{deadline: ~D[2023-06-12], title: "some title"}
+
+      assert {:ok, %Document{} = document} = Documents.create_document(valid_attrs)
+      assert document.deadline == ~D[2023-06-12]
+      assert document.title == "some title"
+    end
+
+    test "create_document/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Documents.create_document(@invalid_attrs)
+    end
+
+    test "update_document/2 with valid data updates the document" do
+      document = document_fixture()
+      update_attrs = %{deadline: ~D[2023-06-13], title: "some updated title"}
+
+      assert {:ok, %Document{} = document} = Documents.update_document(document, update_attrs)
+      assert document.deadline == ~D[2023-06-13]
+      assert document.title == "some updated title"
+    end
+
+    test "update_document/2 with invalid data returns error changeset" do
+      document = document_fixture()
+      assert {:error, %Ecto.Changeset{}} = Documents.update_document(document, @invalid_attrs)
+      assert document == Documents.get_document!(document.id)
+    end
+
+    test "delete_document/1 deletes the document" do
+      document = document_fixture()
+      assert {:ok, %Document{}} = Documents.delete_document(document)
+      assert_raise Ecto.NoResultsError, fn -> Documents.get_document!(document.id) end
+    end
+
+    test "change_document/1 returns a document changeset" do
+      document = document_fixture()
+      assert %Ecto.Changeset{} = Documents.change_document(document)
+    end
+  end
+
+  describe "chapters" do
+    alias Idisclose.Documents.Chapter
+
+    import Idisclose.DocumentsFixtures
+
+    @invalid_attrs %{body: nil, order: nil}
+
+    test "list_chapters/0 returns all chapters" do
+      chapter = chapter_fixture()
+      assert Documents.list_chapters() == [chapter]
+    end
+
+    test "get_chapter!/1 returns the chapter with given id" do
+      chapter = chapter_fixture()
+      assert Documents.get_chapter!(chapter.id) == chapter
+    end
+
+    test "create_chapter/1 with valid data creates a chapter" do
+      valid_attrs = %{body: "some body", order: 42}
+
+      assert {:ok, %Chapter{} = chapter} = Documents.create_chapter(valid_attrs)
+      assert chapter.body == "some body"
+      assert chapter.order == 42
+    end
+
+    test "create_chapter/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Documents.create_chapter(@invalid_attrs)
+    end
+
+    test "update_chapter/2 with valid data updates the chapter" do
+      chapter = chapter_fixture()
+      update_attrs = %{body: "some updated body", order: 43}
+
+      assert {:ok, %Chapter{} = chapter} = Documents.update_chapter(chapter, update_attrs)
+      assert chapter.body == "some updated body"
+      assert chapter.order == 43
+    end
+
+    test "update_chapter/2 with invalid data returns error changeset" do
+      chapter = chapter_fixture()
+      assert {:error, %Ecto.Changeset{}} = Documents.update_chapter(chapter, @invalid_attrs)
+      assert chapter == Documents.get_chapter!(chapter.id)
+    end
+
+    test "delete_chapter/1 deletes the chapter" do
+      chapter = chapter_fixture()
+      assert {:ok, %Chapter{}} = Documents.delete_chapter(chapter)
+      assert_raise Ecto.NoResultsError, fn -> Documents.get_chapter!(chapter.id) end
+    end
+
+    test "change_chapter/1 returns a chapter changeset" do
+      chapter = chapter_fixture()
+      assert %Ecto.Changeset{} = Documents.change_chapter(chapter)
+    end
+  end
 end

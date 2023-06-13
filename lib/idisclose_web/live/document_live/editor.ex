@@ -24,9 +24,7 @@ defmodule IdiscloseWeb.DocumentLive.Editor do
   end
 
   @impl true
-  def handle_event("save_chapter", params, socket) do
-    IO.puts(params["body"])
-
+  def handle_event("save", %{"chapter" => params}, socket) do
     socket =
       case Documents.update_chapter(socket.assigns.chapter, params) do
         {:ok, _} -> socket

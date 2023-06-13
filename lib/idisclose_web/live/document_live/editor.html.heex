@@ -2,7 +2,11 @@
   <%= @chapter.title %>
 </.header>
 
-<textarea id="editor" phx-hook="Editor" name={:body}><%= @chapter.body %></textarea>
-<.button id="save-chapter" phx-hook="EditorContent">Save</.button>
+<.simple_form for={@form} id="chapter-form" phx-submit="save">
+  <.input id="editor" phx-hook="Editor" field={@form[:body]} type="textarea" label="Body" />
+  <:actions>
+    <.button phx-disable-with="Saving...">Save Document</.button>
+  </:actions>
+</.simple_form>
 
 <.back navigate={~p"/documents/#{@chapter.document_id}"}>Back to document</.back>

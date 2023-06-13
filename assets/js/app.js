@@ -20,11 +20,10 @@ let Hooks = {};
 import suneditor from "../vendor/suneditor.min.js";
 import katex from "../vendor/katex.min.js";
 
-let editor;
-
 Hooks.Editor = {
   mounted() {
-    editor = SUNEDITOR.create(document.getElementById("editor"), {
+    const textareaEditor = document.getElementById("editor");
+    const editor = SUNEDITOR.create(textareaEditor, {
       mode: "classic",
       rtl: false,
       //fullPage: true,
@@ -75,18 +74,10 @@ Hooks.Editor = {
         ],
       ],
     });
-  },
-};
 
-Hooks.EditorContent = {
-  mounted() {
-    this.el.addEventListener("click", () => {
-      this.pushEvent(
-        "save_chapter",
-        { body: editor.getContents() },
-        (reply, ref) => {}
-      );
-    });
+    // Listeners
+    editor.onInput = (e, core) =>
+      (textareaEditor.textContent = editor.getContents());
   },
 };
 

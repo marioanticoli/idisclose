@@ -1,5 +1,7 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+@import "./suneditor.min.css";
+@import "./katex.min.css";
 
 /* This file is for your main application CSS */

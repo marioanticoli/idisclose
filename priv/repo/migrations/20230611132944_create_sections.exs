@@ -5,7 +5,7 @@ defmodule Idisclose.Repo.Migrations.CreateSections do
     create table(:sections, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :title, :string
-      add :body, :string
+      add :body, :text
       add :description, :string
 
       timestamps()

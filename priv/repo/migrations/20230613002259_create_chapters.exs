@@ -5,7 +5,7 @@ defmodule Idisclose.Repo.Migrations.CreateChapters do
     create table(:chapters, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :title, :string
-      add :body, :string
+      add :body, :text
       add :order, :integer
       add :document_id, references(:documents, on_delete: :nothing, type: :binary_id)
       add :section_id, references(:sections, on_delete: :nothing, type: :binary_id)

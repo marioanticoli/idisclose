@@ -16,12 +16,11 @@ defmodule IdiscloseWeb.SectionLive.FormComponent do
         for={@form}
         id="section-form"
         phx-target={@myself}
-        phx-change="validate"
         phx-submit="save"
       >
         <.input field={@form[:title]} type="text" label="Title" />
-        <.input field={@form[:body]} type="text" label="Body" />
         <.input field={@form[:description]} type="text" label="Description" />
+        <.input id="editor" phx-hook="Editor" field={@form[:body]} type="textarea" label="Body" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Section</.button>
         </:actions>

@@ -38,3 +38,5 @@ npm-debug.log
 .elixir_ls
 
 idisclose-postgres-data
+
+/priv/static/documents/generated/*

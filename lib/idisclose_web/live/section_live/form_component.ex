@@ -12,12 +12,7 @@ defmodule IdiscloseWeb.SectionLive.FormComponent do
         <:subtitle>Use this form to manage section records in your database.</:subtitle>
       </.header>
 
-      <.simple_form
-        for={@form}
-        id="section-form"
-        phx-target={@myself}
-        phx-submit="save"
-      >
+      <.simple_form for={@form} id="section-form" phx-target={@myself} phx-submit="save">
         <.input field={@form[:title]} type="text" label="Title" />
         <.input field={@form[:description]} type="text" label="Description" />
         <.input id="editor" phx-hook="Editor" field={@form[:body]} type="textarea" label="Body" />

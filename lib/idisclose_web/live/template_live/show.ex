@@ -35,4 +35,12 @@ defmodule IdiscloseWeb.TemplateLive.Show do
   defp page_title(:show), do: "Show Template"
   defp page_title(:edit), do: "Edit Template"
   defp page_title(:new_assoc), do: "New Association"
+
+  @impl true
+  def handle_event("delete", %{"template_id" => template_id, "section_id" => section_id}, socket) do
+    :ok = Documents.delete_section_template(section_id, template_id)
+    template = Documents.get_template!(template_id)
+
+    {:noreply, assign(socket, :template, template)}
+  end
 end

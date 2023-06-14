@@ -263,6 +263,31 @@ defmodule Idisclose.Documents do
   end
 
   @doc """
+  Deletes a section template.
+
+  ## Examples
+
+      iex> delete_section_template(section_template)
+      {:ok, %SectionTemplate{}}
+
+      iex> delete_section_template(section_template)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_section_template(section_id, template_id) do
+    query =
+      from(st in SectionTemplate,
+        where: st.section_id == ^section_id,
+        where: st.template_id == ^template_id
+      )
+
+    case Repo.delete_all(query) do
+      {1, _} -> :ok
+      _ -> :error
+    end
+  end
+
+  @doc """
   Returns an `%Ecto.Changeset{}` for tracking section template changes.
 
   ## Examples

@@ -13,13 +13,30 @@
   </:actions>
 </.header>
 
-<.list>
-  <:item :for={section <- @template.sections} title="Section">
-    <.link navigate={~p"/sections/#{section}"}>
-      <%= section.title %>
+<.table
+  id="sections-templates"
+  rows={@template.sections}
+  row_click={fn section -> JS.navigate(~p"/sections/#{section}") end}
+>
+  <:col :let={section} label="Title"><%= section.title %></:col>
+  <:col :let={section} label="Description"><%= section.description %></:col>
+  <:action :let={section}>
+    <div class="sr-only">
+      <.link navigate={~p"/sections/#{section}"}>Show</.link>
+    </div>
+  </:action>
+  <:action :let={section}>
+    <.link
+      phx-click={
+        JS.push("delete", value: %{template_id: @template.id, section_id: section.id})
+        |> hide("##{@template.id}")
+      }
+      data-confirm="Are you sure?"
+    >
+      Delete
     </.link>
-  </:item>
-</.list>
+  </:action>
+</.table>
 
 <.back navigate={~p"/templates"}>Back to templates</.back>
 

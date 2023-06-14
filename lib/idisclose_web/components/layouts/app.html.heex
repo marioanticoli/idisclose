@@ -1,28 +1,75 @@
 <header class="px-4 sm:px-6 lg:px-8">
-  <div class="flex items-center justify-between border-b border-zinc-100 py-3 text-sm">
-    <div class="flex items-center gap-4">
-      <a href="/">
-        <img src={~p"/images/logo.svg"} width="36" />
-      </a>
-      <p class="bg-brand/5 text-brand rounded-full px-2 font-medium leading-6">
-        v<%= Application.spec(:phoenix, :vsn) %>
-      </p>
+  <nav class="bg-gradient-to-r from-yellow-300 to-orange-500">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <a href="/" class="text-gray-800 font-bold text-lg">
+              <img src={~p"/images/logo.svg"} width="36" />
+            </a>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-10 flex items-baseline space-x-4">
+              <.link
+                href={~p"/sections"}
+                class="text-gray-800 hover:text-white hover:bg-orange-400 px-4 py-2 rounded-md text-base font-medium"
+              >
+                Sections
+              </.link>
+              <.link
+                href={~p"/templates"}
+                class="text-gray-800 hover:text-white hover:bg-orange-400 px-4 py-2 rounded-md text-base font-medium"
+              >
+                Templates
+              </.link>
+              <.link
+                href={~p"/documents"}
+                class="text-gray-800 hover:text-white hover:bg-orange-400 px-4 py-2 rounded-md text-base font-medium"
+              >
+                Documents
+              </.link>
+            </div>
+          </div>
+        </div>
+
+        <div class="hidden md:block">
+          <%= if @current_user do %>
+            <div class="flex items-center space-x-4">
+              <span class="text-gray-800"><%= @current_user.email %></span>
+              <.link
+                href={~p"/users/settings"}
+                class="text-gray-800 hover:text-white hover:bg-orange-400 px-3 py-2 rounded-md text-base font-medium"
+              >
+                Settings
+              </.link>
+              <.link
+                href={~p"/users/log_out"}
+                method="delete"
+                class="text-gray-800 hover:text-white hover:bg-orange-400 px-3 py-2 rounded-md text-base font-medium"
+              >
+                Logout
+              </.link>
+            </div>
+          <% else %>
+            <div class="flex items-center space-x-4">
+              <.link
+                href={~p"/users/register"}
+                class="text-gray-800 hover:text-white hover:bg-orange-400 px-3 py-2 rounded-md text-base font-medium"
+              >
+                Register
+              </.link>
+              <.link
+                href={~p"/users/log_in"}
+                class="text-gray-800 hover:text-white hover:bg-orange-400 px-3 py-2 rounded-md text-base font-medium"
+              >
+                Login
+              </.link>
+            </div>
+          <% end %>
+        </div>
+      </div>
     </div>
-    <div class="flex items-center gap-4 font-semibold leading-6 text-zinc-900">
-      <a href="https://twitter.com/elixirphoenix" class="hover:text-zinc-700">
-        @elixirphoenix
-      </a>
-      <a href="https://github.com/phoenixframework/phoenix" class="hover:text-zinc-700">
-        GitHub
-      </a>
-      <a
-        href="https://hexdocs.pm/phoenix/overview.html"
-        class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80"
-      >
-        Get Started <span aria-hidden="true">&rarr;</span>
-      </a>
-    </div>
-  </div>
+  </nav>
 </header>
 <main class="px-4 py-20 sm:px-6 lg:px-8">
   <div class="mx-auto max-w-2xl">

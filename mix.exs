@@ -57,7 +57,9 @@ defmodule Idisclose.MixProject do
       # static analysis - guidelines
       {:credo, "~> 1.7"},
       # static analysis - security
-      {:sobelow, "~> 0.12.2"}
+      {:sobelow, "~> 0.12.2"},
+      # HTML to PDF 
+      {:pdf_generator, "~> 0.6.2"}
     ]
   end
 

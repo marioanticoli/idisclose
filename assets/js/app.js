@@ -69,8 +69,8 @@ Hooks.Editor = {
           //"imageGallery",
           "fullScreen",
           "showBlocks",
-          "preview",
-          "save",
+          //"preview",
+          //"save",
         ],
       ],
     });
@@ -78,6 +78,18 @@ Hooks.Editor = {
     // Listeners
     editor.onInput = (e, core) =>
       (textareaEditor.textContent = editor.getContents());
+
+    editor.onPaste = (e, cleanData, maxCharCount, core) =>
+      (textareaEditor.textContent = cleanData);
+
+    editor.onImageUpload = (
+      targetElement,
+      index,
+      state,
+      info,
+      remainingFilesCount,
+      core
+    ) => (textareaEditor.textContent = editor.getContents());
   },
 };
 

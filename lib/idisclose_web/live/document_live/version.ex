@@ -9,6 +9,11 @@ defmodule IdiscloseWeb.DocumentLive.Version do
     {:ok, socket}
   end
 
+  @diff_template %{
+    ins: ~s|<span class="text-green-700">~s</span>|,
+    del: ~s|<span class="text-red-700">~s</span>|
+  }
+
   @impl true
   def handle_params(%{"id" => document_id, "chapter_id" => chapter_id}, _, socket) do
     page_title = "Compare versions"
@@ -17,7 +22,7 @@ defmodule IdiscloseWeb.DocumentLive.Version do
     socket =
       case PieceTable.load(document_id, chapter_id) do
         {:ok, t} ->
-          {table, diff} = build_diff(:prev, t)
+          {table, diff} = PieceTable.diff_string(:prev, t, @diff_template)
 
           socket
           |> assign(:table, table)
@@ -32,41 +37,12 @@ defmodule IdiscloseWeb.DocumentLive.Version do
     {:noreply, socket}
   end
 
-  # return result if text was never changed
-  defp build_diff(:prev, %{applied: [], result: result} = table), do: {table, result}
-
-  defp build_diff(:prev, %{applied: [edit | _]} = table) do
-    %{result: result} = table = PieceTable.undo!(table)
-
-    {table, build_string(result, edit)}
-  end
-
-  # return result if text was never changed
-  defp build_diff(:next, %{to_apply: [], result: result} = table), do: {table, result}
-
-  defp build_diff(:next, %{to_apply: [edit | _]} = table) do
-    %{result: result} = table = PieceTable.redo!(table)
-
-    {table, build_string(result, edit)}
-  end
-
-  defp build_string(result, edit) do
-    IO.iodata_to_binary([
-      String.slice(result, 0, edit.position),
-      highlight(edit.change, edit.text),
-      String.slice(result, edit.position..-1)
-    ])
-  end
-
-  defp highlight(op, text) when op in [:ins, "ins"],
-    do: ~s|<span class="text-green-700">#{text}</span>|
-
-  defp highlight(op, text) when op in [:del, "del"],
-    do: ~s|<span class="text-red-700">#{text}</span>|
-
   @impl true
-  def handle_event("prev", _params, socket) do
-    {table, diff} = build_diff(:prev, socket.assigns.table)
+  def handle_event(event, _params, socket) when event in ~w(next prev) do
+    {table, diff} =
+      event |> String.to_atom() |> PieceTable.diff_string(socket.assigns.table, @diff_template)
+
+    diff = IO.iodata_to_binary(diff)
 
     socket =
       socket
@@ -76,13 +52,13 @@ defmodule IdiscloseWeb.DocumentLive.Version do
     {:noreply, socket}
   end
 
-  def handle_event("next", _params, socket) do
-    {table, diff} = build_diff(:next, socket.assigns.table)
+  def handle_event("select", _, socket) do
+    # chapter = socket.assigns.chapter
 
-    socket =
-      socket
-      |> assign(:table, table)
-      |> assign(:text, diff)
+    # socket.assigns.table
+    ## remove any subsequent change
+    # |> Map.put(:to_apply, [])
+    # |> PieceTable.save(chapter.document_id, chapter.id)
 
     {:noreply, socket}
   end

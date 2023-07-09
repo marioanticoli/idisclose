@@ -9,5 +9,7 @@
   <%= raw(@text) %>
 </div>
 
+<.button phx-click="select">Select this version</.button>
+
 <.back navigate={~p"/documents/#{@chapter.document_id}/chapter/#{@chapter.id}"}>Edit</.back>
 <.back navigate={~p"/documents/#{@chapter.document_id}"}>Back to document</.back>

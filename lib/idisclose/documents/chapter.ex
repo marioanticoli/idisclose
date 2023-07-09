@@ -8,7 +8,6 @@ defmodule Idisclose.Documents.Chapter do
   @foreign_key_type :binary_id
   schema "chapters" do
     field :title, :string
-    field :body, :string
     field :order, :integer
 
     belongs_to :document, Document
@@ -19,7 +18,7 @@ defmodule Idisclose.Documents.Chapter do
 
   @doc false
   def changeset(%__MODULE__{} = chapter \\ %__MODULE__{}, attrs) do
-    required_fields = [:title, :body, :order, :document_id, :section_id]
+    required_fields = [:title, :order, :document_id, :section_id]
 
     chapter
     |> cast(attrs, required_fields)

@@ -10,8 +10,9 @@ defmodule IdiscloseWeb.DocumentLive.Version do
   end
 
   @diff_template %{
-    ins: ~s|<span class="text-green-700">~s</span>|,
-    del: ~s|<span class="text-red-700">~s</span>|
+    ins: ~s|<span class="bg-green-400">~s</span>|,
+    del: ~s|<span class="bg-red-400">~s</span>|,
+    edit: ~s|<span class="bg-blue-400">~s</span>|
   }
 
   @impl true

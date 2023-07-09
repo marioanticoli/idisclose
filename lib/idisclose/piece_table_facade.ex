@@ -70,29 +70,28 @@ defmodule Idisclose.PieceTableFacade do
   def diff_string(:prev, %{applied: [], result: result} = table, _), do: {table, result}
   def diff_string(:next, %{to_apply: [], result: result} = table, _), do: {table, result}
 
-  # TODO: check if should uncomment
-  ## if changes happen at the same position it's an edit
-  # def diff_string(
-  # :prev,
-  # %{applied: [%{position: position} = edit1, %{position: position} = edit2 | _rest]} =
-  # table,
-  # template
-  # ) do
-  # %{result: result} = table = table |> PieceTable.undo!() |> PieceTable.undo!()
+  # if changes happen at the same position it's an edit
+  def diff_string(
+        :prev,
+        %{applied: [%{position: position} = edit1, %{position: position} = edit2 | _rest]} =
+          table,
+        template
+      ) do
+    %{result: result} = table = table |> PieceTable.undo!() |> PieceTable.undo!()
 
-  # {table, build_string_list(result, template, [edit1, edit2])}
-  # end
+    {table, build_string_list(result, template, [edit1, edit2])}
+  end
 
-  # def diff_string(
-  # :next,
-  # %{to_apply: [%{position: position} = edit1, %{position: position} = edit2 | _rest]} =
-  # table,
-  # template
-  # ) do
-  # %{result: result} = table = table |> PieceTable.redo!() |> PieceTable.redo!()
+  def diff_string(
+        :next,
+        %{to_apply: [%{position: position} = edit1, %{position: position} = edit2 | _rest]} =
+          table,
+        template
+      ) do
+    %{result: result} = table = table |> PieceTable.redo!() |> PieceTable.redo!()
 
-  # {table, build_string_list(result, template, [edit1, edit2])}
-  # end
+    {table, build_string_list(result, template, [edit1, edit2])}
+  end
 
   # insert or delete
   def diff_string(:prev, %{applied: [edit | _]} = table, template) do
@@ -125,18 +124,16 @@ defmodule Idisclose.PieceTableFacade do
     ]
   end
 
-  # defp build_string_list(result, template, edits) do
-  # dbg()
-  # %{del: [del], ins: [ins]} = Enum.group_by(edits, & &1.change)
-  # next_pos = del.position + String.length(del.text)
+  defp build_string_list(result, template, edits) do
+    %{del: [del], ins: [ins]} = Enum.group_by(edits, & &1.change)
+    next_pos = del.position + String.length(del.text)
 
-  # [
-  # String.slice(result, 0, del.position),
-  # build_from_template([del.text], template.del),
-  # build_from_template([ins.text], template.ins),
-  # String.slice(result, next_pos..-1)
-  # ]
-  # end
+    [
+      String.slice(result, 0, del.position),
+      build_from_template([ins.text], template.edit),
+      String.slice(result, next_pos..-1)
+    ]
+  end
 
   # interpolate text
   defp build_from_template(values, template) when is_list(values),

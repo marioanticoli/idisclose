@@ -2,10 +2,10 @@
   <%= @chapter.title %>
 </.header>
 
-<.button phx-click="next">Next</.button>
-<.button phx-click="prev">Previous</.button>
+<.button phx-click="prev"><.icon name="hero-arrow-uturn-left-solid" /></.button>
+<.button phx-click="next"><.icon name="hero-arrow-uturn-right-solid" /></.button>
 
-<div class="">
+<div class="box-border h-auto w-auto p-6 border-2 text-lg">
   <%= raw(@text) %>
 </div>
 

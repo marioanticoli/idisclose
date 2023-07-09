@@ -1,0 +1,13 @@
+<.header>
+  <%= @chapter.title %>
+</.header>
+
+<.button phx-click="next">Next</.button>
+<.button phx-click="prev">Previous</.button>
+
+<div class="">
+  <%= raw(@text) %>
+</div>
+
+<.back navigate={~p"/documents/#{@chapter.document_id}/chapter/#{@chapter.id}"}>Edit</.back>
+<.back navigate={~p"/documents/#{@chapter.document_id}"}>Back to document</.back>

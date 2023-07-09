@@ -92,8 +92,10 @@ defmodule IdiscloseWeb.Router do
 
       live "/documents/:id", DocumentLive.Show, :show
       live "/documents/:id/show/edit", DocumentLive.Show, :edit
-      # live "/documents/:id/chapter/new", DocumentLive.Show, :new_chapter
+
       live "/documents/:id/chapter/:chapter_id", DocumentLive.Editor, :edit
+
+      live "/documents/:id/chapter/:chapter_id/compare", DocumentLive.Version, :compare
     end
   end
 

@@ -78,7 +78,7 @@ defmodule IdiscloseWeb.DocumentLive.Editor do
   end
 
   # the repeated body checks for equality, in which case no need to write the file
-  #defp update_piece_table(%{result: body} = table, body, _, _), do: {:ok, table}
+  # defp update_piece_table(%{result: body} = table, body, _, _), do: {:ok, table}
 
   defp update_piece_table(table, body, document_id, chapter_id) do
     with {:ok, t} <- PieceTable.diff(table, body) do

@@ -62,7 +62,9 @@ defmodule Idisclose.MixProject do
       # static analysis - security
       {:sobelow, "~> 0.12.2"},
       # HTML to PDF 
-      {:pdf_generator, "~> 0.6.2"}
+      {:pdf_generator, "~> 0.6.2"},
+      # my PieceTable implementation 
+      {:piece_table, "~> 0.1.2"}
     ]
   end
 

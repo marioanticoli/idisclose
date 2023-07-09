@@ -39,8 +39,8 @@ Hooks.Editor = {
       tabDisable: false,
       buttonList: [
         [
-          //"undo",
-          //"redo",
+          "undo",
+          "redo",
           "font",
           "fontSize",
           "formatBlock",
@@ -76,11 +76,9 @@ Hooks.Editor = {
     });
 
     // Listeners
-    editor.onInput = (e, core) =>
-      (textareaEditor.textContent = editor.getContents());
+    editor.onInput = (e, core) => editor.save();
 
-    editor.onPaste = (e, cleanData, maxCharCount, core) =>
-      (textareaEditor.textContent = cleanData);
+    editor.onPaste = (e, cleanData, maxCharCount, core) => editor.save();
 
     editor.onImageUpload = (
       targetElement,
@@ -89,7 +87,7 @@ Hooks.Editor = {
       info,
       remainingFilesCount,
       core
-    ) => (textareaEditor.textContent = editor.getContents());
+    ) => editor.save()
   },
 };
 

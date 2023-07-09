@@ -40,3 +40,5 @@ npm-debug.log
 idisclose-postgres-data
 
 /priv/static/documents/generated/*
+
+/priv/data/*

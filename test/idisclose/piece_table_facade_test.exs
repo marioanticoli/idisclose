@@ -26,7 +26,7 @@ defmodule Idisclose.PieceTableFacadeTest do
   describe "diff_string/3" do
     setup do
       table = PieceTable.new!("long(ish) text test")
-      template = %{ins: "+++~s", del: "---~s"}
+      template = %{ins: "+++~s", del: "---~s", edit: "+-=~s"}
 
       %{table: table, template: template}
     end
@@ -82,30 +82,58 @@ defmodule Idisclose.PieceTableFacadeTest do
                PieceTableFacade.diff_string(:prev, table, template)
     end
 
-    # test "creates diff for edit at start", %{table: table, template: template} do
-    ## first delete then insert
-    # table = table |> PieceTable.delete!(0, 4) |> PieceTable.insert!("short", 0)
-    # updated_table = table |> PieceTable.undo!() |> PieceTable.undo!()
+    test "creates diff for edit at start", %{table: table, template: template} do
+      table = table |> PieceTable.delete!(0, 4) |> PieceTable.insert!("short", 0)
+      updated_table = table |> PieceTable.undo!() |> PieceTable.undo!()
 
-    # assert {updated_table, ["", "---long", "+++short", "(ish) text test"]} ==
-    # PieceTableFacade.diff_string(:prev, table, template)
-    # end
+      assert {updated_table, ["", "+-=short", "(ish) text test"]} ==
+               PieceTableFacade.diff_string(:prev, table, template)
+    end
 
-    # test "creates diff for edit at end", %{table: table, template: template} do
-    # table = table |> PieceTable.delete!(14, 5) |> PieceTable.insert!("!!!", 14)
-    # updated_table = table |> PieceTable.undo!() |> PieceTable.undo!()
+    test "creates diff for edit at end", %{table: table, template: template} do
+      table = table |> PieceTable.delete!(14, 5) |> PieceTable.insert!("!!!", 14)
+      updated_table = table |> PieceTable.undo!() |> PieceTable.undo!()
 
-    # assert {updated_table, ["long(ish) text", "--- test", "+++!!!", ""]} ==
-    # PieceTableFacade.diff_string(:prev, table, template)
-    # end
+      assert {updated_table, ["long(ish) text", "+-=!!!", ""]} ==
+               PieceTableFacade.diff_string(:prev, table, template)
+    end
 
-    # test "creates diff for edit", %{table: table, template: template} do
-    # table = table |> PieceTable.delete!(4, 5) |> PieceTable.insert!("er", 4)
-    # updated_table = table |> PieceTable.undo!() |> PieceTable.undo!()
+    test "creates diff for edit", %{table: table, template: template} do
+      table = table |> PieceTable.delete!(4, 5) |> PieceTable.insert!("er", 4)
+      updated_table = table |> PieceTable.undo!() |> PieceTable.undo!()
 
-    # assert {updated_table, ["long", "---(ish)", "+++er", " text test"]} ==
-    # PieceTableFacade.diff_string(:prev, table, template)
-    # end
+      assert {updated_table, ["long", "+-=er", " text test"]} ==
+               PieceTableFacade.diff_string(:prev, table, template)
+    end
+
+    test "created diff with undo then redo", %{table: table, template: template} do
+      table =
+        table
+        |> PieceTable.insert!("!!!!", 19)
+        |> PieceTable.delete!(4, 5)
+        |> PieceTable.insert!("er", 4)
+        |> IO.inspect(label: "0")
+
+      updated_table1 = table |> PieceTable.undo!() |> PieceTable.undo!() |> IO.inspect(label: "1")
+
+      assert {updated_table1, ["long", "+-=er", " text test!!!!"]} ==
+               PieceTableFacade.diff_string(:prev, table, template)
+
+      updated_table2 = updated_table1 |> PieceTable.undo!() |> IO.inspect(label: "2")
+
+      assert {updated_table2, ["long(ish) text test", "+++!!!!", ""]} ==
+               PieceTableFacade.diff_string(:prev, updated_table1, template)
+
+      updated_table3 = updated_table2 |> PieceTable.redo!() |> IO.inspect(label: "3")
+
+      # assert {updated_table3, ["long(ish) text test", "+++!!!!", ""]} ==
+      # PieceTableFacade.diff_string(:next, updated_table2, template)
+
+      updated_table4 =
+        updated_table3 |> PieceTable.redo!() |> PieceTable.redo!() |> IO.inspect(label: "4")
+
+      assert {updated_table4, []} == PieceTableFacade.diff_string(:next, updated_table3, template)
+    end
 
     test "returns original if no changes", %{table: table, template: template} do
       assert {table, table.result} == PieceTableFacade.diff_string(:prev, table, template)

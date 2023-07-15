@@ -84,11 +84,12 @@ defmodule Idisclose.PieceTableFacade do
 
   def diff_string(
         :next,
-        %{to_apply: [%{position: position} = edit1, %{position: position} = edit2 | _rest]} =
+        %{applied: [%{position: position} = edit1, %{position: position} = edit2 | _rest]} =
           table,
         template
       ) do
-    %{result: result} = table = table |> PieceTable.redo!() |> PieceTable.redo!()
+    %{result: result} =
+      table = table |> PieceTable.redo!() |> IO.inspect() |> PieceTable.redo!() |> IO.inspect()
 
     {table, build_string_list(result, template, [edit1, edit2])}
   end
@@ -138,8 +139,4 @@ defmodule Idisclose.PieceTableFacade do
   # interpolate text
   defp build_from_template(values, template) when is_list(values),
     do: :io_lib.format(template, values) |> to_string()
-
-  # TODO: maybe remove
-  defp build_from_template(value, template),
-    do: value |> List.wrap() |> build_from_template(template)
 end

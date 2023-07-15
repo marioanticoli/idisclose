@@ -1,0 +1,48 @@
+Context:
+Persons: 
+  admin -> manages all users of the system and create and edit sections and templates
+  editor -> generate documents from templates, edit and review documents, generate PDFs
+  clients -> review documents
+
+Software system:
+  iDisclose -> web application which allows to manage users, create and edit sections that can be grouped in different templates. From templates it can generate documents which can then be edited and exported to PDF. Documents can be reviewed and it's possible to request changes to a specific portion of text, ask questions to the editors, leave comments. It allows users to communicate through video or chat.
+
+Containers:
+  Web Browser/Desktop App:
+    Users access the web application using a web browser or a desktop app.
+
+  Web Application Container (Phoenix/Elixir):
+    This container hosts your Phoenix/Elixir application code and dependencies.
+    It serves as the backend for your web application and handles user requests.
+
+  LiveView Container (Phoenix/Elixir):
+    This container hosts the necessary code and dependencies to support Phoenix LiveView functionality.
+    It works alongside the web application container to manage real-time interactions and UI updates.
+
+  Database Container (PostgreSQL):
+    This container hosts your PostgreSQL database.
+    It stores and manages the application's data, including templates, text sections, user comments, and document versions.
+
+  File Storage Container (S3):
+    This container integrates with Amazon S3 or a similar service to store generated files.
+    It handles the storage and retrieval of files required by the application.
+
+  Authentication and Authorization Container:
+    This container hosts the code responsible for user authentication and authorization.
+    It handles user registration, login, and role-based access control.
+
+  Chat/Videoconferencing Container:
+    This container hosts the code required for the chat and videoconferencing functionality.
+    It enables synchronous communication between users within the application.
+
+Components:
+  Web Browser/Mobile App -> Web Application Container
+  Web Application Container -> Database Container
+  Web Application Container -> File Storage Container (S3)
+  Web Application Container -> Authentication and Authorization Container
+  Web Application Container -> Chat/Videoconferencing Container
+  Web Application Container -> LiveView Container
+  LiveView Container -> Database Container
+  Web Application Container -> File Storage Container (S3) for file upload/download
+  Web Application Container -> Chat/Videoconferencing Container for synchronous communication
+  Web Application Container -> File Storage Container (S3) for generated PDF storage

@@ -1,0 +1,80 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml 
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+!define BrowserAlias(alias) [User] as alias
+
+LAYOUT_WITH_LEGEND()
+
+'Landscape
+title iDisclose - Architecture Diagram
+
+Person(admin, "Admin", "Manages all users\nand creates/edit sections\ntemplates")
+Person(editor, "Editor", "Generates documents\nfrom templates, edits\nand reviews documents,\ngenerates PDFs")
+Person_Ext(clients, "Clients", "Reviews documents")
+
+System(iDisclose, "iDisclose", "Web application\nfor collaborative drafting\nof disclosure documents\nin the capital markets")
+
+Rel(admin, iDisclose, "Manages")
+Rel(editor, iDisclose, "Uses")
+Rel(clients, iDisclose, "Uses")
+
+Boundary(webBoundary, "Web Browser/Desktop App") {
+    BrowserAlias(User)
+}
+
+Container(webAppContainer, "Web Application", "Phoenix/Elixir") {
+    Component(docComponent, "Document", "Document Model")
+    Component(authComponent, "User", "User Model")
+    Component(chatComponent, "Communication", "Communication Model", "Notifications, chat\n and videoconferencing")
+    Component(liveViewComponent, "LiveView", "Phoenix LiveView", "Renders dynamic views")
+    Component(storageComponent, "Storage", "Storage Model")
+    Component(pubSubComponent, "PubSub", "Built-in", "Communication among processes")
+    Component_Ext(pieceTableComponent, "PieceTable", "Dependency", "Custom library")
+}
+
+Container(databaseContainer, "Database", "PostgreSQL")
+Container(fileStorageContainer, "File Storage", "S3")
+
+Rel(webAppContainer, authComponent, "Handles authentication and authorization")
+Rel(webAppContainer, chatComponent, "Enables sync/async communication")
+Rel(webAppContainer, liveViewComponent, "Manages real-time interactions and UI updates")
+Rel(webAppContainer, docComponent, "Manages sections, templates\n and documents")
+Rel(webAppContainer, storageComponent, "Handles communication with file storage")
+Rel(webAppContainer, databaseContainer, "Stores and retrieves data")
+Rel(webAppContainer, fileStorageContainer, "Stores and retrieves files")
+
+Container(componentsContainer, "Components") {
+    Component(docComponent2, "Document", "Document Model")
+    Component(authComponent2, "User", "User Model")
+    Component(chatComponent2, "Communication", "Communication Model", "Notifications, chat\n and videoconferencing")
+    Component(liveViewComponent2, "LiveView", "Phoenix LiveView", "Renders dynamic views")
+    Component(storageComponent2, "Storage", "Storage Model")
+    Component(pubSubComponent2, "PubSub", "Built-in", "Communication among processes")
+    Component_Ext(pieceTableComponent2, "PieceTable", "Dependency", "Custom library")
+}
+
+Container(databaseContainer2, "Database", "PostgreSQL")
+Container(fileStorageContainer2, "File Storage", "S3")
+
+Rel(docComponent2, pieceTableComponent2, "Manages a piece table")
+Rel(docComponent2, storageComponent2, "Manages file storage")
+Rel(docComponent2, databaseContainer2, "Stores and retrieves data")
+Rel(docComponent2, liveViewComponent2, "Renders data")
+Rel(storageComponent2, fileStorageContainer2, "Stores and retrieves files")
+Rel(authComponent2, liveViewComponent2, "Show and edits users")
+Rel(authComponent2, databaseContainer2, "Stores and retrieves data")
+Rel(chatComponent2, databaseContainer2, "Stores and retrieves data")
+Rel(chatComponent2, liveViewComponent2, "Renders notifications/chat/videoconference")
+Rel(chatComponent2, authComponent2, "Retrieves data to route communications")
+BiRel(chatComponent2, pubSubComponent2, "Communicates with other users")
+Rel(liveViewComponent2, databaseContainer2, "Retrieves data")
+BiRel(liveViewComponent2, pubSubComponent2, "Updates data to render")
+
+Boundary(webBoundary, "iDisclose") {
+    webBoundary -down-> webAppContainer
+}
+
+@enduml

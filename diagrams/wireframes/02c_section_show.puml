@@ -1,0 +1,30 @@
+@startsalt
+title Show section page
+{+
+{/ iDisclose }
+{+
+  "https://idisclose.com/sections                                                                                                                               "
+}
+{* Home | Sections | Templates | Documents | Profile }
+{
+  .
+  .
+  .
+  .
+}
+{
+  <b>Sections | [ Edit ]
+}
+{
+  <b>Name | Abstract
+  <b>Description | Abstract for research paper
+  <b>Body | <p>placeholder in HTML</p>
+}
+{
+  .
+  .
+  .
+  .
+}
+}
+@endsalt

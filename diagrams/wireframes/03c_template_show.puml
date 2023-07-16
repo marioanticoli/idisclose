@@ -1,0 +1,30 @@
+@startsalt
+title Show template page
+{+
+{/ iDisclose }
+{+
+  "https://idisclose.com/templates                                                                                                                              "
+}
+{* Home | Sections | Templates | Documents | Profile }
+{
+  .
+  .
+  .
+  .
+}
+{
+  <b>Sections in university report | [ Edit ] | [ Add Section ]
+}
+{
+  <b>Name | <b>Description
+  abstract | abstract
+  literature | literature review
+}
+{
+  .
+  .
+  .
+  .
+}
+}
+@endsalt

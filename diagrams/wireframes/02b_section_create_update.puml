@@ -1,0 +1,32 @@
+@startsalt
+title New section page
+{+
+{/ iDisclose }
+{+
+  "https://idisclose.com/sections                                                                                                                               "
+}
+{
+  .
+  .
+  .
+  .
+}
+<b>New Section
+{
+  Name | "here goes the name                                                         "
+  Description | "here goes the description                                                  "
+}
+{+
+  .
+  .
+  .
+  "                                                                             HTML body"
+}
+{
+  .
+  .
+  .
+  .
+}
+}
+@endsalt

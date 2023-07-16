@@ -1,0 +1,27 @@
+@startsalt
+title New document page
+{+
+{/ iDisclose }
+{+
+  "https://idisclose.com/documents                                                                                                                              "
+}
+{
+  .
+  .
+  .
+  .
+}
+<b>New Document
+{
+  Name | "here goes the name                                                         "
+  Deadline | "2023/09/01"
+  Description | "here goes the description                                                  "
+}
+{
+  .
+  .
+  .
+  .
+}
+}
+@endsalt

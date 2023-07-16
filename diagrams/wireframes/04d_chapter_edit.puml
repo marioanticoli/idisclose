@@ -1,0 +1,44 @@
+@startsalt
+title Edit chapter page
+{+
+{/ iDisclose }
+{+
+  "https://idisclose.com/documents                                                                                                                              "
+}
+{* Home | Sections | Templates | Documents | Profile }
+{
+  .
+  .
+  .
+  .
+}
+{
+  <b>Abstract
+}
+{
+  .
+  .
+}
+{
+  Body | [ Compare Versions ]
+}
+{+
+  .
+  .
+  .
+  .
+  .
+  .
+  "HTML WYSISYG                                                                                "
+}
+{
+  [ Save ]
+}
+{
+  .
+  .
+  .
+  .
+}
+}
+@endsalt

@@ -1,0 +1,29 @@
+@startsalt
+title Documents page
+{+
+{/ iDisclose }
+{+
+  "https://idisclose.com/documents                                                                                                                              "
+}
+{* Home | Sections | Templates | Documents | Profile }
+{
+  .
+  .
+  .
+  .
+}
+{
+  <b>Documents | [ New Document ]
+}
+{
+  <b>Name | <b>Deadline | Template | - 
+  final project | 2023-09-01 | [ edit ] | [ delete ]
+}
+{
+  .
+  .
+  .
+  .
+}
+}
+@endsalt

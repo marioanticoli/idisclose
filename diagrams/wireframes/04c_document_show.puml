@@ -1,0 +1,37 @@
+@startsalt
+title Show document page
+{+
+{/ iDisclose }
+{+
+  "https://idisclose.com/documents                                                                                                                              "
+}
+{* Home | Sections | Templates | Documents | Profile }
+{
+  .
+  .
+  .
+  .
+}
+{
+  <b>Final project | [ Edit ] | [ Stub ] | [ Generate ]
+}
+{
+  <b>Deadline | 2023-09-01
+  <b>Template | University project
+}
+{
+  .
+  .
+}
+{
+  <b>1. Abstract | [ Edit ]
+  <b>2. Introduction | [ Edit ]
+}
+{
+  .
+  .
+  .
+  .
+}
+}
+@endsalt

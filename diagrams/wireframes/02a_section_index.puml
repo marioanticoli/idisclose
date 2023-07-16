@@ -1,0 +1,31 @@
+@startsalt
+title Sections page
+{+
+{/ iDisclose }
+{+
+  "https://idisclose.com/sections                                                                                                                               "
+}
+{* Home | Sections | Templates | Documents | Profile }
+{
+  .
+  .
+  .
+  .
+}
+{
+  <b>Sections | [ New Section ]
+}
+{
+  <b>Name | <b>Description | - | - 
+  Abstract | abstract | [ edit ] | [ delete ]
+  Introduction | introduction | [ edit ] | [ delete ]
+  Literature | literature review | [ edit ] | [ delete ]
+}
+{
+  .
+  .
+  .
+  .
+}
+}
+@endsalt

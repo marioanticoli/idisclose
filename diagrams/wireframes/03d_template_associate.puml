@@ -1,0 +1,27 @@
+@startsalt
+title New template-section page
+{+
+{/ iDisclose }
+{+
+  "https://idisclose.com/templates                                                                                                                              "
+}
+{
+  .
+  .
+  .
+  .
+}
+<b>New Association
+{
+  Chapter Order | "1     "
+  Section | ^Section^^ literature^^ abstract^
+}
+[ Save ]
+{
+  .
+  .
+  .
+  .
+}
+}
+@endsalt

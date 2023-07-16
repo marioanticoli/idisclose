@@ -1,0 +1,26 @@
+@startsalt
+title New template page
+{+
+{/ iDisclose }
+{+
+  "https://idisclose.com/templates                                                                                                                              "
+}
+{
+  .
+  .
+  .
+  .
+}
+<b>New Template
+{
+  Name | "here goes the name                                                         "
+  Description | "here goes the description                                                  "
+}
+{
+  .
+  .
+  .
+  .
+}
+}
+@endsalt

@@ -3,15 +3,34 @@ title Login page
 {+
 {/ iDisclose }
 {+
-  "https://idisclose.com/sections                                                                                                                               "
+  "https://idisclose.com/login                                                                                                                                  "
 }
-{* Home | Templates | Documents | Profile }
+{* Home | Sections | Templates | Documents | Profile }
+{
+  .
+  .
+  .
+  .
+  .
+  .
+  .
+  .
+}
 {
   Login    | "email    "
   Password | "****     "
   [  LOGIN  ]
 }
-
+{
+  .
+  .
+  .
+  .
+  .
+  .
+  .
+  .
+}
 }
 @endsalt
 

@@ -1,0 +1,30 @@
+@startsalt
+title Templates page
+{+
+{/ iDisclose }
+{+
+  "https://idisclose.com/templates                                                                                                                              "
+}
+{* Home | Sections | Templates | Documents | Profile }
+{
+  .
+  .
+  .
+  .
+}
+{
+  <b>Templates | [ New Template ]
+}
+{
+  <b>Name | <b>Description | - | - 
+  report | university report | [ edit ] | [ delete ]
+  article | jounarl article | [ edit ] | [ delete ]
+}
+{
+  .
+  .
+  .
+  .
+}
+}
+@endsalt

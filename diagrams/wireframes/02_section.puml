@@ -1,0 +1,17 @@
+@startsalt
+title Section page
+{+
+{/ iDisclose }
+{+
+  "https://idisclose.com/sections                                                                                                                               "
+}
+{* Home | Templates | Documents | Profile }
+{
+  Login    | "email    "
+  Password | "****     "
+  [  LOGIN  ]
+}
+
+}
+@endsalt
+

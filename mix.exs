@@ -11,7 +11,8 @@ defmodule Idisclose.MixProject do
       aliases: aliases(),
       deps: deps(),
       # Make Phoenix not compile on warnings
-      elixirc_options: [warnings_as_errors: true]
+      elixirc_options: [warnings_as_errors: true],
+      test_coverage: [tool: Coverex.Task]
     ]
   end
 
@@ -61,6 +62,8 @@ defmodule Idisclose.MixProject do
       {:credo, "~> 1.7"},
       # static analysis - security
       {:sobelow, "~> 0.12.2"},
+      # test coverage 
+      {:coverex, "~> 1.5", only: :test},
       # HTML to PDF 
       {:pdf_generator, "~> 0.6.2"},
       # my PieceTable implementation 

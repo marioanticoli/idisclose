@@ -1,0 +1,17 @@
+FROM marioanticoli/elixir-base:latest as builder
+
+# prepare build dir
+WORKDIR /app
+
+# Copy project 
+COPY . .
+
+RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales wkhtmltopdf \
+  && apt-get clean && rm -f /var/lib/apt/lists/*_*
+
+# set runner ENV
+ENV MIX_ENV="test"
+
+RUN mix deps.get 
+RUN mix deps.compile
+

@@ -57,7 +57,7 @@ defmodule Idisclose.MixProject do
       # clustering capabilities
       {:libcluster, "~> 3.3"},
       # static analysis - discrepancies
-      {:dialyxir, "~> 1.3", only: [:dev], runtime: false},
+      {:dialyxir, "~> 1.3", only: [:dev, :test], runtime: false},
       # static analysis - guidelines
       {:credo, "~> 1.7"},
       # static analysis - security

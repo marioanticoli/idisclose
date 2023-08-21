@@ -14,7 +14,9 @@ spec:
     spec:
       containers:
       - name: migrations
-        image: marioanticoli/idisclose-migration
+        image: marioanticoli/idisclose
+        command: ["/app/bin/idisclose"]
+        args: ["eval", "Idisclose.ReleaseTasks.migrate"]
         imagePullPolicy: Always
         env:
           - name: POSTGRES_DB                                                                                                                                   

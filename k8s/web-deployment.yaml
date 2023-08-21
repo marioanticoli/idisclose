@@ -15,8 +15,6 @@ spec:
       containers:
         - name: idisclose-web
           image: marioanticoli/idisclose
-          command: ["/app/bin/idisclose"]
-          args: ["eval", "Idisclose.ReleaseTasks.migrate()"]
           ports:
             - containerPort: 4000
               name: "http"

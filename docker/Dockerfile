@@ -37,7 +37,7 @@ RUN mix release
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
-FROM ${RUNNER_IMAGE}
+FROM builder
 
 RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales wkhtmltopdf \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*

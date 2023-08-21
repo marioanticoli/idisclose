@@ -56,25 +56,20 @@ jobs:
       - name: Run Phoenix App Tests
         run: docker run --rm --add-host=host.docker.internal:host-gateway -e DB_HOSTNAME=host.docker.internal idisclose:test mix test
 
-  #build: 
-    #needs: test 
-    #runs-on: ubuntu-latest
+  build_and_push_image: 
+    needs: test 
+    runs-on: ubuntu-latest
 
-    #steps:
-      #- name: Checkout Repository
-        #uses: actions/checkout@v2
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-      #- name: Build image 
-        #run: docker build -t marioanticoli/idisclose:latest -f ./docker/Dockerfile .
+      - name: Log in to Docker Hub
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
-  #push_image:
-    #needs: build 
-    #runs-on: ubuntu-latest
+      - name: Build image 
+        run: docker build -t marioanticoli/idisclose:latest -f ./docker/Dockerfile .
 
-    #steps:
-      #- name: Log in to Docker Hub
-        #run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-
-      #- name: Push Docker Image to Docker Hub
-        #run: docker push marioanticoli/idisclose:latest 
+      - name: Push Docker Image to Docker Hub
+        run: docker push marioanticoli/idisclose:latest 
 

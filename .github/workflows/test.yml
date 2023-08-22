@@ -33,8 +33,28 @@ jobs:
             deps
           key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
 
-      - name: Build Phoenix App
-        run: docker build -t idisclose:test -f ./docker/Dockerfile.test .
+      - name: Set up Elixir
+        uses: actions/setup-elixir@v1
+        with:
+          otp-version: '25.2.1'
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Create and migrate database
+        run: mix ecto.setup
+
+      - name: Run sobelow
+        run: mix sobelow
+
+      - name: Run dialyzer
+        run: mix dialyzer --format short
+
+      - name: Run credo 
+        run: mix credo
+
+      - name: Run Phoenix App Tests
+        run: mix test
 
       - name: Save Cache
         uses: actions/cache@v2
@@ -43,17 +63,5 @@ jobs:
             mix.lock
             deps
           key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-
-      - name: Run sobelow
-        run: docker run --rm idisclose:test mix sobelow
-
-      - name: Run dialyzer
-        run: docker run --rm idisclose:test mix dialyzer --format short
-
-      - name: Run credo 
-        run: docker run --rm idisclose:test mix credo
-
-      - name: Run Phoenix App Tests
-        run: docker run --rm --add-host=host.docker.internal:host-gateway -e DB_HOSTNAME=host.docker.internal idisclose:test mix test
 
 

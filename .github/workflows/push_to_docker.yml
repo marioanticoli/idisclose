@@ -11,21 +11,22 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Log in to Docker Hub
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Get commit hash
         id: commit_hash
-        run: echo "hash=$(git rev-parse --short HEAD) >> $GITHUB_ENV"
+        run: echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Get current timestamp
         id: timestamp
-        run: echo "timestamp=$(date +%Y%m%d%H%M%S) >> $GITHUB_ENV"
+        run: echo "time=$(date +%Y%m%d%H%M%S)"
 
       - name: Build image 
-        run: docker build -t marioanticoli/idisclose:$timestamp-$hash -f Dockerfile .
+        run: docker build -t marioanticoli/idisclose:${{ steps.commit_hash.outputs.time }}-${{ steps.timestamp.outputs.hash }} -f Dockerfile .
 
       - name: Push Docker Image to Docker Hub
-        run: docker push marioanticoli/idisclose:$timestamp-$hash
+        run: docker push marioanticoli/idisclose:${{ steps.commit_hash.outputs.time }}-${{ steps.timestamp.outputs.hash }}
+

@@ -8,6 +8,12 @@ defmodule Idisclose.PieceTableFacade do
 
   @storage_path "priv/data"
 
+  @type template :: %{
+    ins: String.t(),
+    del: String.t(),
+    edit: String.t()
+  }
+
   @spec load(String.t(), String.t()) :: {:ok, PieceTable.t()} | {:error, File.posix()}
   def load(document_id, chapter_id) do
     with {:ok, raw_content} <-
@@ -65,7 +71,7 @@ defmodule Idisclose.PieceTableFacade do
     end
   end
 
-  @spec diff_string(atom(), PieceTable.t(), String.t()) :: {PieceTable.t(), String.t()}
+  @spec diff_string(atom(), PieceTable.t(), template()) :: {PieceTable.t(), String.t()}
   # no changes, do nothing
   def diff_string(:prev, %{applied: [], result: result} = table, _), do: {table, result}
   def diff_string(:next, %{to_apply: [], result: result} = table, _), do: {table, result}

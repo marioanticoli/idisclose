@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: idisclose-web-service-lb
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 4000
+  selector:
+    app: idisclose-web
+

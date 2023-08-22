@@ -7,7 +7,8 @@ import Config
 # before starting your production server.
 config :idisclose, IdiscloseWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json",
-  check_origin: ["http://localhost:30000"]
+  # check_origin: ["http://localhost:30000", "www.idisclose.com"]
+  check_origin: false
 
 # Configures Swoosh API Client
 config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: Idisclose.Finch

@@ -10,7 +10,7 @@ spec:
     name: idisclose-postgres-data-persisent-volume-claim
   storageClassName: manual
   capacity:
-    storage: 5Gi
+    storage: 4Gi
   accessModes:
     - ReadWriteOnce
   # change if not on microk8s

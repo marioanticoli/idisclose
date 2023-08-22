@@ -30,8 +30,8 @@ spec:
               value: postgres
           resources:
             limits:
-              memory: 4Gi
-              cpu: "2"
+              memory: 2Gi
+              cpu: "1"
       volumes:
         - name: idisclose-postgres-data-storage
           persistentVolumeClaim:

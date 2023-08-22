@@ -1,4 +1,8 @@
 defmodule Idisclose.PieceTableFacade do
+  @moduledoc """
+  Facade to simplify intereaction with the PieceTable library
+  """
+
   # delegate the execution to PieceTable library
   defdelegate new!(text), to: PieceTable
   defdelegate diff!(table, text), to: PieceTable.Differ
@@ -9,10 +13,10 @@ defmodule Idisclose.PieceTableFacade do
   @storage_path "priv/data"
 
   @type template :: %{
-    ins: String.t(),
-    del: String.t(),
-    edit: String.t()
-  }
+          ins: String.t(),
+          del: String.t(),
+          edit: String.t()
+        }
 
   @spec load(String.t(), String.t()) :: {:ok, PieceTable.t()} | {:error, File.posix()}
   def load(document_id, chapter_id) do
@@ -94,8 +98,7 @@ defmodule Idisclose.PieceTableFacade do
           table,
         template
       ) do
-    %{result: result} =
-      table = table |> PieceTable.redo!() |> IO.inspect() |> PieceTable.redo!() |> IO.inspect()
+    %{result: result} = table = table |> PieceTable.redo!() |> PieceTable.redo!()
 
     {table, build_string_list(result, template, [edit1, edit2])}
   end

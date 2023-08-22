@@ -1,4 +1,8 @@
 defmodule Idisclose.Accounts.UserNotifier do
+  @moduledoc """
+  Handles create/update user emails
+  """
+
   import Swoosh.Email
 
   alias Idisclose.Mailer

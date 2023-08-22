@@ -1,4 +1,8 @@
 defmodule Idisclose.Documents.Chapter do
+  @moduledoc """
+  Handles create/update chapters
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

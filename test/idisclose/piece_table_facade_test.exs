@@ -112,25 +112,23 @@ defmodule Idisclose.PieceTableFacadeTest do
         |> PieceTable.insert!("!!!!", 19)
         |> PieceTable.delete!(4, 5)
         |> PieceTable.insert!("er", 4)
-        |> IO.inspect(label: "0")
 
-      updated_table1 = table |> PieceTable.undo!() |> PieceTable.undo!() |> IO.inspect(label: "1")
+      updated_table1 = table |> PieceTable.undo!() |> PieceTable.undo!()
 
       assert {updated_table1, ["long", "+-=er", " text test!!!!"]} ==
                PieceTableFacade.diff_string(:prev, table, template)
 
-      updated_table2 = updated_table1 |> PieceTable.undo!() |> IO.inspect(label: "2")
+      updated_table2 = updated_table1 |> PieceTable.undo!()
 
       assert {updated_table2, ["long(ish) text test", "+++!!!!", ""]} ==
                PieceTableFacade.diff_string(:prev, updated_table1, template)
 
-      updated_table3 = updated_table2 |> PieceTable.redo!() |> IO.inspect(label: "3")
+      updated_table3 = updated_table2 |> PieceTable.redo!()
 
       # assert {updated_table3, ["long(ish) text test", "+++!!!!", ""]} ==
       # PieceTableFacade.diff_string(:next, updated_table2, template)
 
-      updated_table4 =
-        updated_table3 |> PieceTable.redo!() |> PieceTable.redo!() |> IO.inspect(label: "4")
+      updated_table4 = updated_table3 |> PieceTable.redo!() |> PieceTable.redo!()
 
       assert {updated_table4, []} == PieceTableFacade.diff_string(:next, updated_table3, template)
     end

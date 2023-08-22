@@ -1,4 +1,8 @@
 defmodule Idisclose.Documents.Section do
+  @moduledoc """
+  Handles create/update sections 
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

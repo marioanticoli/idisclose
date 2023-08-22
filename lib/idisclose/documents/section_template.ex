@@ -1,4 +1,8 @@
 defmodule Idisclose.Documents.SectionTemplate do
+  @moduledoc """
+  Handles create/update section-template associations
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

@@ -1,4 +1,8 @@
 defmodule Idisclose.ReleaseTasks do
+  @moduledoc """
+  Release task to exec migrations in prod without mix 
+  """
+
   def migrate do
     {:ok, _, _} = Ecto.Migrator.with_repo(Idisclose.Repo, &Ecto.Migrator.run(&1, :up, all: true))
   end

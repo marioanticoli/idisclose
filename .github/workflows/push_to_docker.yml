@@ -18,14 +18,15 @@ jobs:
 
       - name: Get commit hash
         id: commit_hash
-        run: echo "::set-output name=hash::$(git rev-parse --short HEAD)"
+        run: echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Get current timestamp
         id: timestamp
-        run: echo "::set-output name=time::$(date +%Y%m%d%H%M%S)"
+        run: echo "timestamp=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
 
       - name: Build image 
-        run: docker build -t marioanticoli/idisclose:${{ steps.commit_hash.outputs.hash }}-${{ steps.timestamp.outputs.time }} -f Dockerfile .
+        run: docker build -t marioanticoli/idisclose:${{ steps.commit_hash.outputs.timestamp }}-${{ steps.timestamp.outputs.hash }} -f Dockerfile .
 
       - name: Push Docker Image to Docker Hub
-        run: docker push marioanticoli/idisclose:${{ steps.commit_hash.outputs.hash }}-${{ steps.timestamp.outputs.time }}
+        run: docker push marioanticoli/idisclose:${{ steps.commit_hash.outputs.timestamp }}-${{ steps.timestamp.outputs.hash }}
+

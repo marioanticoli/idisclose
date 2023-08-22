@@ -16,8 +16,16 @@ jobs:
       - name: Log in to Docker Hub
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Get commit hash
+        id: commit_hash
+        run: echo "::set-output name=hash::$(git rev-parse --short HEAD)"
+
+      - name: Get current timestamp
+        id: timestamp
+        run: echo "::set-output name=time::$(date +%Y%m%d%H%M%S)"
+
       - name: Build image 
-        run: docker build -t marioanticoli/idisclose:latest -f Dockerfile .
+        run: docker build -t marioanticoli/idisclose:${{ steps.commit_hash.outputs.hash }}-${{ steps.timestamp.outputs.time }} -f Dockerfile .
 
       - name: Push Docker Image to Docker Hub
-        run: docker push marioanticoli/idisclose:latest 
+        run: docker push marioanticoli/idisclose:${{ steps.commit_hash.outputs.hash }}-${{ steps.timestamp.outputs.time }}

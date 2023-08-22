@@ -1,4 +1,8 @@
 defmodule Idisclose.Documents.Document do
+  @moduledoc """
+  Handles create/update documents
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -7,11 +11,11 @@ defmodule Idisclose.Documents.Document do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "documents" do
-    field :deadline, :date
-    field :title, :string
+    field(:deadline, :date)
+    field(:title, :string)
 
-    belongs_to :template, Template
-    has_many :chapters, Chapter
+    belongs_to(:template, Template)
+    has_many(:chapters, Chapter)
 
     timestamps()
   end

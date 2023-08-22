@@ -1,4 +1,8 @@
 defmodule IdiscloseWeb.Telemetry do
+  @moduledoc """
+  Telemetry for Idisclose
+  """
+
   use Supervisor
   import Telemetry.Metrics
 

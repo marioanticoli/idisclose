@@ -1,4 +1,8 @@
 defmodule IdiscloseWeb.UserAuth do
+  @moduledoc """
+  Auth users
+  """
+
   use IdiscloseWeb, :verified_routes
 
   import Plug.Conn

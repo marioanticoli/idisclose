@@ -1,4 +1,8 @@
 defmodule Idisclose.Documents.Template do
+  @moduledoc """
+  Handles create/update templates
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

@@ -41,7 +41,7 @@ spec:
                   name: prod-secret 
                   key: secret-cookie
             - name: K8_SELECTOR
-              value: service=idisclose-web-service-lb
+              value: service=idisclose-web
           resources:
             limits:
               memory: 2Gi

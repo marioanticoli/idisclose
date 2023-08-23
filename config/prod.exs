@@ -29,8 +29,8 @@ config :libcluster,
       strategy: Elixir.Cluster.Strategy.Kubernetes,
       config: [
         mode: :dns,
-        kubernetes_node_basename: "app-endpoint",
-        kubernetes_selector: System.get_env("K8_SELECTOR", "service=idisclose"),
+        kubernetes_node_basename: "idisclose-web",
+        kubernetes_selector: System.get_env("K8_SELECTOR", "service=idisclose-web"),
         polling_interval: 10_000
       ]
     ]

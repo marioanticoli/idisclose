@@ -1,6 +1,5 @@
 #!/bin/sh 
 
-TAG=$(curl -s "https://hub.docker.com/v2/repositories/marioanticoli/idisclose/tags/"  | jq '.results[].name' | head -n 1 | tr -d '"')
 SKIP_CONTEXT_SELECTION=false
 USE_MICROK8S=true
 
@@ -12,10 +11,6 @@ for arg in "$@"; do
      --skip-microk8s)
       USE_MICROK8S=false
       ;;
-    --help)
-      echo -e "--skip-context-selection\tSkip the context selection (use in scripts)"
-      echo -e "--skip-microk8s\t\t\tDon't use microk8s' kubectl"
-      exit 0
   esac
 done
 
@@ -44,14 +39,14 @@ if ! $SKIP_CONTEXT_SELECTION; then
   kubectl config use-context $selected_context
 fi
 
-kubectl apply -f prod-secret.yaml 
-kubectl apply -f db-persistent-volume.yaml
-kubectl apply -f db-persistent-volume-claim.yaml
-kubectl apply -f db-deployment.yaml
-kubectl apply -f db-service.yaml
-sed "17s/$/:$TAG/" migration-job.yaml | kubectl apply -f -
-sed "17s/$/:$TAG/" web-deployment.yaml | kubectl apply -f -
-kubectl apply -f web-service.yaml
+kubectl delete services idisclose-web-service
+kubectl delete services idisclose-db-service 
+kubectl delete deployments idisclose-web
+kubectl delete deployments idisclose-db
+kubectl delete persistentvolumeclaims idisclose-postgres-data-persisent-volume-claim
+kubectl delete persistentvolume idisclose-postgres-data-persisent-volume 
+kubectl delete secret prod-secret
+kubectl delete jobs idisclose-migrations
 
 kubectl get all
 

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: idisclose-web-service-lb
+  name: idisclose-web-service
 spec:
   type: LoadBalancer
   ports:

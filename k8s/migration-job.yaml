@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: migrations
+  name: idisclose-migrations
   labels:
     app: migrations
 spec:

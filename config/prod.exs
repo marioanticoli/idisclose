@@ -23,6 +23,7 @@ config :logger, level: :info
 ########################
 
 config :libcluster,
+  debug: true,
   topologies: [
     k8s: [
       # maybe switch to Elixir.Cluster.Strategy.Kubernetes.DNS

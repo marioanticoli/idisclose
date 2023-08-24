@@ -67,6 +67,7 @@ config :phoenix, :json_library, Jason
 ########################
 
 config :libcluster,
+  debug: true,
   topologies: [local: [strategy: LibCluster.LocalStrategy]]
 
 # Import environment specific config. This must remain at the bottom

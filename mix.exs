@@ -22,7 +22,7 @@ defmodule Idisclose.MixProject do
   def application do
     [
       mod: {Idisclose.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end
 
@@ -54,6 +54,8 @@ defmodule Idisclose.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
+      # ecto stats 
+      {:ecto_psql_extras, "~> 0.7.13"},
       # clustering capabilities
       {:libcluster, "~> 3.3"},
       # static analysis - discrepancies

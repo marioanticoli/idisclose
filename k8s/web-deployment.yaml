@@ -40,8 +40,10 @@ spec:
                 secretKeyRef:
                   name: prod-secret 
                   key: secret-cookie
+            - name: K8_BASENAME 
+              value: idisclose
             - name: K8_SELECTOR
-              value: service=idisclose-web
+              value: app=idisclose-web
             - name: POD_IP
               valueFrom:
                 fieldRef:

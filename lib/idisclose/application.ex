@@ -37,6 +37,6 @@ defmodule Idisclose.Application do
 
   defp cluster_child do
     topologies = Application.get_env(:libcluster, :topologies, [])
-    {Cluster.Supervisor, [topologies, [name: ItineraryCore.ClusterSupervisor]]}
+    {Cluster.Supervisor, [topologies, [name: Idisclose.ClusterSupervisor]]}
   end
 end

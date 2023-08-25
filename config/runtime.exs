@@ -63,6 +63,27 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
+  ########################
+  # Clustering
+  ########################
+
+  config :libcluster,
+    debug: true,
+    topologies: [
+      k8s: [
+        # maybe switch to Elixir.Cluster.Strategy.Kubernetes.DNS
+        strategy: Elixir.Cluster.Strategy.Kubernetes,
+        config: [
+          mode: :ip,
+          kubernetes_node_basename: System.get_env("K8_BASENAME", "idisclose"),
+          kubernetes_namespace: System.get_env("K8_NAMESPACE", "default"),
+          kubernetes_selector: System.get_env("K8_SELECTOR", "app=idisclose-web"),
+          kubernetes_ip_lookup_mode: :pods,
+          polling_interval: 10_000
+        ]
+      ]
+    ]
+
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key

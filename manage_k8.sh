@@ -1,5 +1,20 @@
 #!/bin/sh 
 
+confirm_and_run() {
+  local command_name="$1"
+
+  read -p "Do you want to run '$command_name'? (y/n): " choice
+  case "$choice" in
+    y|Y )
+      echo "Running '$command_name'..."
+      ;;
+    n|N )
+      echo "Exiting."
+      exit 0
+      ;;
+  esac
+}
+
 IMAGE_LINE=17
 
 SKIP_CONTEXT_SELECTION=false
@@ -88,6 +103,8 @@ if ! $SKIP_CONTEXT_SELECTION; then
   selected_context=${contexts_array[$context_number]}
   kubectl config use-context $selected_context
 fi
+
+confirm_and_run "$COMMAND"
 
 if [ "$COMMAND" = "apply_all" ]; then
   kubectl apply -f k8s/prod-secret.yaml 

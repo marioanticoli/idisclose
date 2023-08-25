@@ -8,7 +8,7 @@ confirm_and_run() {
     y|Y )
       echo "Running '$command_name'..."
       ;;
-    n|N )
+    *)
       echo "Exiting."
       exit 0
       ;;
@@ -75,8 +75,10 @@ while getopts ":adrb:cme:i:t:h" opt; do
 done
 
 if [ -z "$COMMAND" ]; then
-  echo "Error: COMMAND is not set. Please specify a kubectl command"
+  echo "Error: COMMAND is not set. Please specify a command or run the script with -h for help."
   exit 1
+else
+  confirm_and_run "$COMMAND"
 fi
 
 if $USE_MICROK8S; then
@@ -104,8 +106,6 @@ if ! $SKIP_CONTEXT_SELECTION; then
   kubectl config use-context $selected_context
 fi
 
-confirm_and_run "$COMMAND"
-
 if [ "$COMMAND" = "apply_all" ]; then
   kubectl apply -f k8s/prod-secret.yaml 
   kubectl apply -f k8s/db-persistent-volume.yaml
@@ -116,9 +116,11 @@ if [ "$COMMAND" = "apply_all" ]; then
   sed -e "${IMAGE_LINE}s|image: .*|image: $IMAGE|" -e "${IMAGE_LINE}s|$|:$TAG|" k8s/migration-job.yaml | kubectl apply -f -
   sed -e "${IMAGE_LINE}s|image: .*|image: $IMAGE|" -e "${IMAGE_LINE}s|$|:$TAG|" k8s/web-deployment.yaml | kubectl apply -f -
   kubectl apply -f k8s/web-service.yaml
+  kubectl apply -f k8s/web-service-headless.yaml
 
   kubectl get all
 elif [ "$COMMAND" = "delete_all" ]; then
+  kubectl delete services idisclose-web-headless
   kubectl delete services idisclose-web-service
   kubectl delete services idisclose-db-service 
   kubectl delete deployments idisclose-web

@@ -71,7 +71,9 @@ defmodule Idisclose.MixProject do
       # HTML to PDF 
       {:pdf_generator, "~> 0.6.2"},
       # my PieceTable implementation 
-      {:piece_table, "~> 0.1.2"}
+      {:piece_table, "~> 0.1.2"},
+      # auth-z 
+      {:ex_janus, "~> 0.3.2"}
     ]
   end
 

@@ -1,17 +1,37 @@
 defmodule IdiscloseWeb.SectionLive.Index do
   use IdiscloseWeb, :live_view
 
+  import Idisclose.Utils.Auth, only: [to_action: 1, authorized?: 3]
+  import Idisclose.Utils.Liveview, only: [put_error: 2]
+
   alias Idisclose.Documents
   alias Idisclose.Documents.Section
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :sections, Documents.list_sections())}
+    {:ok, stream(socket, :sections, list_sections(socket))}
+  end
+
+  defp list_sections(socket) do
+    if authorized?(socket, Section, :index) do
+      Documents.list_sections()
+    else
+      []
+    end
   end
 
   @impl true
   def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    action = to_action(socket.assigns.live_action)
+
+    socket =
+      if authorized?(socket, Section, action) do
+        apply_action(socket, socket.assigns.live_action, params)
+      else
+        put_error(socket, action)
+      end
+
+    {:noreply, socket}
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
@@ -34,14 +54,26 @@ defmodule IdiscloseWeb.SectionLive.Index do
 
   @impl true
   def handle_info({IdiscloseWeb.SectionLive.FormComponent, {:saved, section}}, socket) do
-    {:noreply, stream_insert(socket, :sections, section)}
+    socket =
+      if authorized?(socket, section, :create) do
+        stream_insert(socket, :sections, section)
+      else
+        put_error(socket, :create)
+      end
+
+    {:noreply, socket}
   end
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    section = Documents.get_section!(id)
-    {:ok, _} = Documents.delete_section(section)
+    socket =
+      if authorized?(socket, Section, :delete) do
+        {:ok, section} = id |> Documents.get_section!() |> Documents.delete_section()
+        stream_delete(socket, :sections, section)
+      else
+        put_error(socket, :delete)
+      end
 
-    {:noreply, stream_delete(socket, :sections, section)}
+    {:noreply, socket}
   end
 end

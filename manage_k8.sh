@@ -18,12 +18,13 @@ confirm_and_run() {
 IMAGE_LINE=17
 
 SKIP_CONTEXT_SELECTION=false
-USE_MICROK8S=true
+#USE_MICROK8S=true
 COMMAND=
 TAG=$(curl -s "https://hub.docker.com/v2/repositories/marioanticoli/idisclose/tags/"  | jq '.results[].name' | head -n 1 | tr -d '"')
 IMAGE=$(sed -n "${IMAGE_LINE}s/.*image: \([^[:space:]]*\).*/\1/p" k8s/web-deployment.yaml)
 
-while getopts ":adrb:cme:i:t:h" opt; do
+#while getopts ":adrb:cme:i:t:h" opt; do
+while getopts ":adrb:ci:t:h" opt; do
   case $opt in
     a)
       COMMAND=apply_all
@@ -40,12 +41,12 @@ while getopts ":adrb:cme:i:t:h" opt; do
     c) 
       SKIP_CONTEXT_SELECTION=true 
       ;; 
-    m) 
-      USE_MICROK8S=false 
-      ;;
-    e)
-      COMMAND=$OPTARG 
-      ;;
+    #m) 
+      #USE_MICROK8S=false 
+      #;;
+    #e)
+      #COMMAND=$OPTARG 
+      #;;
     i)
       IMAGE=$OPTARG
       ;;
@@ -58,8 +59,8 @@ while getopts ":adrb:cme:i:t:h" opt; do
       echo -e "-r\tRollout (requires to set -b deployment)"
       echo -e "-b\tThe deployment name (only for rollout)"
       echo -e "-c\tSkip the context selection (use in scripts)"
-      echo -e "-m\tDon't use microk8s' kubectl"
-      echo -e "-e\tA kubectl command to execute"
+      #echo -e "-m\tDon't use microk8s' kubectl"
+      #echo -e "-e\tA kubectl command to execute"
       echo -e "-i\tAn image to pull instead of the default one"
       echo -e "-t\tA tag instead of the most recent published (not \"latest\")"
       echo -e "-h\tThis help"
@@ -81,9 +82,9 @@ else
   confirm_and_run "$COMMAND"
 fi
 
-if $USE_MICROK8S; then
-  alias kubectl='microk8s kubectl'
-fi
+#if $USE_MICROK8S; then
+  #alias kubectl='microk8s kubectl'
+#fi
 
 if ! $SKIP_CONTEXT_SELECTION; then
   contexts=$(kubectl config get-contexts -o name)
@@ -117,9 +118,14 @@ if [ "$COMMAND" = "apply_all" ]; then
   sed -e "${IMAGE_LINE}s|image: .*|image: $IMAGE|" -e "${IMAGE_LINE}s|$|:$TAG|" k8s/web-deployment.yaml | kubectl apply -f -
   kubectl apply -f k8s/web-service.yaml
   kubectl apply -f k8s/web-service-headless.yaml
+  kubectl apply -f k8s/service-account.yaml
+  kubectl apply -f k8s/roles.yaml
 
   kubectl get all
 elif [ "$COMMAND" = "delete_all" ]; then
+  kubectl delete serviceaccount idisclose-service-account
+  kubectl delete rolebinding pod-list-role-binding
+  kubectl delete role pod-list-role
   kubectl delete services idisclose-web-headless
   kubectl delete services idisclose-web-service
   kubectl delete services idisclose-db-service 
@@ -138,8 +144,8 @@ elif [ "$COMMAND" = "rollout" ]; then
   else
     kubectl rollout restart deployment $DEPLOYMENT
   fi
-else 
-  kubectl $COMMAND
+#else 
+  #kubectl $COMMAND
 fi
 
 

@@ -66,6 +66,8 @@ defmodule Idisclose.MixProject do
       {:sobelow, "~> 0.12.2"},
       # test coverage 
       {:coverex, "~> 1.5", only: :test},
+      # rapid admin generator 
+      {:torch, "~> 5.1"},
       # HTML to PDF 
       {:pdf_generator, "~> 0.6.2"},
       # my PieceTable implementation 

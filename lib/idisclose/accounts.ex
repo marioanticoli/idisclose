@@ -215,6 +215,10 @@ defmodule Idisclose.Accounts do
     end
   end
 
+  def update_user_role(user, role) do
+    user |> User.role_changeset(%{role: role}) |> Repo.update()
+  end
+
   ## Session
 
   @doc """

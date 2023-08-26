@@ -5,13 +5,20 @@ defmodule Idisclose.Accounts.User do
 
   use Ecto.Schema
   import Ecto.Changeset
+
+  @type t() :: %__MODULE__{}
+
+  # set primary key as UUID
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+  # create a list of roles
+  @roles ~w(admin owner editor reviewer observer invitee)a
   schema "users" do
     field(:email, :string)
     field(:password, :string, virtual: true, redact: true)
     field(:hashed_password, :string, redact: true)
     field(:confirmed_at, :naive_datetime)
+    field(:role, Ecto.Enum, values: @roles)
 
     timestamps()
   end
@@ -159,5 +166,16 @@ defmodule Idisclose.Accounts.User do
     else
       add_error(changeset, :current_password, "is not valid")
     end
+  end
+
+  @doc """
+  A user changeset for changing the role.
+
+  ## Options
+
+    * `:role` - The role assigned to the user. Defaults to `observer`.
+  """
+  def role_changeset(user, attrs) do
+    cast(user, attrs, [:role])
   end
 end

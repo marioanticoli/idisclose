@@ -31,11 +31,10 @@ defmodule IdiscloseWeb.Router do
   # Enable LiveDashboard 
   import Phoenix.LiveDashboard.Router
 
-  scope "/dashboard" do
-    # later require user to be admin
-    pipe_through [:browser, :require_authenticated_user]
+  scope "/admin" do
+    pipe_through [:browser, :require_admin_user]
 
-    live_dashboard("/", metrics: IdiscloseWeb.Telemetry, ecto_repos: [Idisclose.Repo])
+    live_dashboard("/dashboard", metrics: IdiscloseWeb.Telemetry, ecto_repos: [Idisclose.Repo])
   end
 
   ## Authentication routes
@@ -59,6 +58,13 @@ defmodule IdiscloseWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{IdiscloseWeb.UserAuth, :ensure_authenticated}] do
+      # Users 
+      live("/admin/users", UserLive.Index, :index)
+      live("/admin/users/:id/edit", UserLive.Index, :edit)
+
+      live("/admin/users/:id", UserLive.Show, :show)
+      live("/admin/users/:id/show/edit", UserLive.Show, :edit)
+
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
 

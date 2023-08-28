@@ -216,7 +216,7 @@ defmodule Idisclose.Accounts do
   end
 
   def update_user_role(user, role) do
-    user |> User.role_changeset(%{role: role}) |> Repo.update()
+    user |> User.role_changeset(role) |> Repo.update()
   end
 
   ## Session
@@ -353,5 +353,47 @@ defmodule Idisclose.Accounts do
       {:ok, %{user: user}} -> {:ok, user}
       {:error, :user, changeset, _} -> {:error, changeset}
     end
+  end
+
+  @doc """
+  Returns the list of users.
+
+  ## Examples
+
+      iex> list_users()
+      [%User{}, ...]
+
+  """
+  def list_users do
+    Repo.all(User)
+  end
+
+  @doc """
+  Deletes a user.
+
+  ## Examples
+
+      iex> delete_user(user)
+      {:ok, %User{}}
+
+      iex> delete_user(user)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_user(%User{} = user) do
+    Repo.delete(user)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking user role changes.
+
+  ## Examples
+
+      iex> change_user_role(user, attres)
+      %Ecto.Changeset{data: %User{role: :admin}}
+
+  """
+  def change_user_role(%User{} = user, attrs \\ %{}) do
+    User.role_changeset(user, attrs)
   end
 end

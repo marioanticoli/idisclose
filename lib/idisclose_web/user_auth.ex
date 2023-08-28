@@ -215,6 +215,30 @@ defmodule IdiscloseWeb.UserAuth do
     end
   end
 
+  @doc """
+  Used for routes that require the user to be an admin.
+  """
+  def require_admin_user(%Plug.Conn{} = conn, _opts) do
+    case conn do
+      %{current_user: nil} ->
+        conn
+        |> put_flash(:error, "You must log in to access this page.")
+        |> maybe_store_return_to()
+        |> redirect(to: ~p"/users/log_in")
+        |> halt()
+
+      %{current_user: %{role: :admin}} ->
+        conn
+
+      _ ->
+        conn
+        |> put_flash(:error, "You must be an admin to access this page.")
+        |> maybe_store_return_to()
+        |> redirect(to: ~p"/")
+        |> halt()
+    end
+  end
+
   defp put_token_in_session(conn, token) do
     conn
     |> put_session(:user_token, token)

@@ -34,6 +34,16 @@ defmodule IdiscloseWeb.Router do
   scope "/admin" do
     pipe_through [:browser, :require_admin_user]
 
+    live_session :require_admin_user,
+      on_mount: [{IdiscloseWeb.UserAuth, :ensure_authenticated}] do
+      # Users 
+      live("/users", UserLive.Index, :index)
+      live("/users/:id/edit", UserLive.Index, :edit)
+
+      live("/users/:id", UserLive.Show, :show)
+      live("/users/:id/show/edit", UserLive.Show, :edit)
+    end
+
     live_dashboard("/dashboard", metrics: IdiscloseWeb.Telemetry, ecto_repos: [Idisclose.Repo])
   end
 
@@ -58,13 +68,6 @@ defmodule IdiscloseWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{IdiscloseWeb.UserAuth, :ensure_authenticated}] do
-      # Users 
-      live("/admin/users", UserLive.Index, :index)
-      live("/admin/users/:id/edit", UserLive.Index, :edit)
-
-      live("/admin/users/:id", UserLive.Show, :show)
-      live("/admin/users/:id/show/edit", UserLive.Show, :edit)
-
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
 

@@ -63,13 +63,6 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 ########################
-# Rapid admin generator
-########################
-
-config :torch,
-  otp_app: :my_app_name
-
-########################
 # Clustering
 ########################
 

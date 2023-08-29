@@ -39,5 +39,6 @@ defmodule Idisclose.Utils.Auth do
   def to_action(:index), do: :read
   def to_action(:edit), do: :update
   def to_action(:show), do: :read
+  def to_action(:new_assoc), do: :create
   def to_action(action), do: action
 end

@@ -41,7 +41,7 @@
 <.back navigate={~p"/templates"}>Back to templates</.back>
 
 <.modal
-  :if={@live_action == :edit}
+  :if={@live_action == :edit and authorized?(@current_user, Template, @live_action)}
   id="template-modal"
   show
   on_cancel={JS.patch(~p"/templates/#{@template}")}
@@ -57,7 +57,7 @@
 </.modal>
 
 <.modal
-  :if={@live_action == :new_assoc}
+  :if={@live_action == :new_assoc and authorized?(@current_user, SectionTemplate, @live_action)}
   id="section-template-modal"
   show
   on_cancel={JS.patch(~p"/templates/#{@template}")}

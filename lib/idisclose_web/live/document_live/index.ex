@@ -1,14 +1,22 @@
 defmodule IdiscloseWeb.DocumentLive.Index do
   use IdiscloseWeb, :live_view
 
+  import Idisclose.Utils.Auth, only: [to_action: 1, authorized?: 3]
+  import Idisclose.Utils.Liveview, only: [put_error: 2]
+
   alias Idisclose.Documents
   alias Idisclose.Documents.Document
 
   @impl true
   def mount(_params, _session, socket) do
-    documents = Documents.list_documents()
-    # |> Enum.map(&{&1.name, &1.id})
-    templates = Documents.list_templates([]) |> Enum.map(&{&1.name, &1.id})
+    {documents, templates} =
+      if authorized?(socket, Document, :index) and authorized?(socket, Template, :index) do
+        documents = Documents.list_documents()
+        templates = Documents.list_templates([]) |> Enum.map(&{&1.name, &1.id})
+        {documents, templates}
+      else
+        {[], []}
+      end
 
     socket =
       socket
@@ -21,7 +29,16 @@ defmodule IdiscloseWeb.DocumentLive.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    action = to_action(socket.assigns.live_action)
+
+    socket =
+      if authorized?(socket, Document, action) do
+        apply_action(socket, socket.assigns.live_action, params)
+      else
+        put_error(socket, action)
+      end
+
+    {:noreply, socket}
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
@@ -44,14 +61,26 @@ defmodule IdiscloseWeb.DocumentLive.Index do
 
   @impl true
   def handle_info({IdiscloseWeb.DocumentLive.FormComponent, {:saved, document}}, socket) do
-    {:noreply, stream_insert(socket, :documents, document)}
+    socket =
+      if authorized?(socket, document, :create) do
+        stream_insert(socket, :documents, document)
+      else
+        put_error(socket, :create)
+      end
+
+    {:noreply, socket}
   end
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    document = Documents.get_document!(id)
-    {:ok, _} = Documents.delete_document(document)
+    socket =
+      if authorized?(socket, Document, :delete) do
+        {:ok, document} = id |> Documents.get_document!() |> Documents.delete_document()
+        stream_delete(socket, :documents, document)
+      else
+        put_error(socket, :delete)
+      end
 
-    {:noreply, stream_delete(socket, :documents, document)}
+    {:noreply, socket}
   end
 end

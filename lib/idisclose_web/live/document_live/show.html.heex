@@ -23,7 +23,7 @@
 <.back navigate={~p"/documents"}>Back to documents</.back>
 
 <.modal
-  :if={@live_action == :edit}
+  :if={@live_action == :edit and authorized?(@current_user, Document, @live_action)}
   id="document-modal"
   show
   on_cancel={JS.patch(~p"/documents/#{@document}")}

@@ -34,7 +34,7 @@
 </.table>
 
 <.modal
-  :if={@live_action in [:new, :edit]}
+  :if={@live_action in [:new, :edit] and authorized?(@current_user, Document, @live_action)}
   id="document-modal"
   show
   on_cancel={JS.patch(~p"/documents")}

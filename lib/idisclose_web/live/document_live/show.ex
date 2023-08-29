@@ -1,6 +1,9 @@
 defmodule IdiscloseWeb.DocumentLive.Show do
   use IdiscloseWeb, :live_view
 
+  import Idisclose.Utils.Auth, only: [to_action: 1, authorized?: 3]
+  import Idisclose.Utils.Liveview, only: [put_error: 2]
+
   alias Idisclose.Documents
 
   # This is a module attribute, it's used to define constants in the code
@@ -13,15 +16,20 @@ defmodule IdiscloseWeb.DocumentLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    page_title = page_title(socket.assigns.live_action)
-    document = Documents.get_document!(id)
-    templates = Documents.list_templates([]) |> Enum.map(&{&1.name, &1.id})
+    action = to_action(socket.assigns.live_action)
 
     socket =
-      socket
-      |> assign(:page_title, page_title)
-      |> assign(:document, document)
-      |> assign(:templates, templates)
+      if authorized?(socket, Document, action) and authorized?(socket, Template, :index) do
+        document = Documents.get_document!(id)
+        templates = Documents.list_templates([]) |> Enum.map(&{&1.name, &1.id})
+
+        socket
+        |> assign(:page_title, page_title(socket.assigns.live_action))
+        |> assign(:document, document)
+        |> assign(:templates, templates)
+      else
+        put_error(socket, action)
+      end
 
     {:noreply, socket}
   end
@@ -39,10 +47,16 @@ defmodule IdiscloseWeb.DocumentLive.Show do
   end
 
   def handle_event("generate_document", _params, socket) do
-    document = socket.assigns.document
-    filename = "#{document.title}.pdf"
+    socket =
+      case socket.assigns.document do
+        nil ->
+          put_error(socket, :generate)
 
-    generate_pdf(document.chapters, filename)
+        document ->
+          filename = "#{document.title}.pdf"
+
+          generate_pdf(document.chapters, filename)
+      end
 
     {:noreply, socket}
   end

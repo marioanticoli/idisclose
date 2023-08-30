@@ -15,6 +15,7 @@ defmodule IdiscloseWeb.DocumentLive.Version do
     edit: ~s|<span class="bg-blue-400">~s</span>|
   }
 
+  # TODO: protect action
   @impl true
   def handle_params(%{"id" => document_id, "chapter_id" => chapter_id}, _, socket) do
     page_title = "Compare versions"

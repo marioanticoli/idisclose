@@ -5,8 +5,8 @@ defmodule Idisclose.PieceTableFacade do
 
   # delegate the execution to PieceTable library
   defdelegate new!(text), to: PieceTable
-  defdelegate diff!(table, text), to: PieceTable.Differ
-  defdelegate diff(table, text), to: PieceTable.Differ
+  defdelegate diff!(table, text, user), to: PieceTable.Differ
+  defdelegate diff(table, text, user), to: PieceTable.Differ
   defdelegate undo!(table), to: PieceTable
   defdelegate redo!(table), to: PieceTable
 

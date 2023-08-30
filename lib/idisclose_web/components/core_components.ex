@@ -549,6 +549,20 @@ defmodule IdiscloseWeb.CoreComponents do
     """
   end
 
+  attr :id, :string, required: true
+  attr :title, :string
+  slot :inner_block, required: true
+
+  def minimizable_window(assigns) do
+    ~H"""
+    <div class="chat-popup" id={@id}>
+      <h1 :if={Map.has_key?(assigns, :title)}><%= @title %></h1>
+
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
   @doc """
   Renders a [Heroicon](https://heroicons.com).
 

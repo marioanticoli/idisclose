@@ -77,3 +77,11 @@
     <%= @inner_content %>
   </div>
 </main>
+<footer>
+  <%= if @current_user do %>
+    <.minimizable_window id="chat-window">
+      <div id="messages" role="log" aria-live="polite"></div>
+      <input id="chat-input" type="text" />
+    </.minimizable_window>
+  <% end %>
+</footer>

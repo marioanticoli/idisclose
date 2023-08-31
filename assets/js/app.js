@@ -107,6 +107,20 @@ let liveSocket = new LiveSocket("/live", Socket, {
   hooks: Hooks,
 });
 
+function toggleSlideover(){
+  document.getElementById('slideover-container').classList.toggle('invisible');
+  document.getElementById('slideover-bg').classList.toggle('opacity-0');
+  document.getElementById('slideover-bg').classList.toggle('opacity-50');
+  document.getElementById('slideover').classList.toggle('translate-x-full');
+}
+
+let toggleButton = document.getElementById("slideover-toggle")
+let slideoverBg = document.getElementById("slideover-bg")
+let slideoverClose = document.getElementById("slideover-close")
+if(toggleButton !== null) toggleButton.addEventListener("click", toggleSlideover)
+if(slideoverBg !== null) slideoverBg.addEventListener("click", toggleSlideover)
+if(slideoverClose !== null) slideoverClose.addEventListener("click", toggleSlideover)
+
 // Show progress bar on live navigation and form submits
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
 window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));

@@ -549,16 +549,48 @@ defmodule IdiscloseWeb.CoreComponents do
     """
   end
 
-  attr :id, :string, required: true
-  attr :title, :string
+  attr :toggle_text, :string, required: true
   slot :inner_block, required: true
 
   def minimizable_window(assigns) do
     ~H"""
-    <div class="chat-popup" id={@id}>
-      <h1 :if={Map.has_key?(assigns, :title)}><%= @title %></h1>
-
-      <%= render_slot(@inner_block) %>
+    <div class="w-screen h-screen flex items-center justify-center">
+      <div
+        class="cursor-pointer px-5 py-2 text-sm border text-gray-500 hover:bg-gray-100 rounded border-gray-300"
+        id="slideover-toggle"
+      >
+        <%= @toggle_text %>
+      </div>
+      <div id="slideover-container" class="w-full h-full fixed inset-0 invisible">
+        <div
+          id="slideover-bg"
+          class="w-full h-full duration-500 ease-out transition-all inset-0 absolute bg-gray-900 opacity-0"
+        >
+        </div>
+        <div
+          id="slideover"
+          class="w-96 bg-white h-full absolute right-0 duration-300 ease-out transition-all translate-x-full"
+        >
+          <div id="slideover-close" class="absolute cursor-pointer text-gray-600 top-0 w-8 h-8 flex items-center justify-center right-0 mt-5 mr-5">
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              >
+              </path>
+            </svg>
+          </div>
+          <%= render_slot(@inner_block) %>
+        </div>
+      </div>
     </div>
     """
   end

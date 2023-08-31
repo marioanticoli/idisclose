@@ -571,7 +571,10 @@ defmodule IdiscloseWeb.CoreComponents do
           id="slideover"
           class="w-96 bg-white h-full absolute right-0 duration-300 ease-out transition-all translate-x-full"
         >
-          <div id="slideover-close" class="absolute cursor-pointer text-gray-600 top-0 w-8 h-8 flex items-center justify-center right-0 mt-5 mr-5">
+          <div
+            id="slideover-close"
+            class="absolute cursor-pointer text-gray-600 top-0 w-8 h-8 flex items-center justify-center right-0 mt-5 mr-5"
+          >
             <svg
               class="w-6 h-6"
               fill="none"

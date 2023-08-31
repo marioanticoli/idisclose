@@ -1,4 +1,7 @@
 defmodule IdiscloseWeb.RoomChannel do
+  @moduledoc """
+  Module to define channels to connect via websocket
+  """
   use Phoenix.Channel
 
   def join("room:lobby", _message, socket) do

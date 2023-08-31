@@ -6,7 +6,7 @@ import {Socket} from "phoenix"
 
 // And connect to the path in "lib/idisclose_web/endpoint.ex". We pass the
 // token for authentication. Read below how it should be used.
-let socket = new Socket("/socket", {params: {token: window.userToken}})
+let socket = new Socket("/socket", {params: {token: window.userToken, user: window.user}})
 
 // When you connect, you'll often need to authenticate the client.
 // For example, imagine you have an authentication plug, `MyAuth`,
@@ -58,18 +58,35 @@ socket.connect()
 // subtopic is its id - in this case 42:
 let channel = socket.channel("room:lobby", {})
 let chatInput         = document.querySelector("#chat-input")
-let messagesContainer = document.querySelector("#messages")
+let messagesContainer = document.querySelector("#chat-messages")
 
-chatInput.addEventListener("keypress", event => {
-  if(event.key === 'Enter'){
-    channel.push("new_msg", {body: chatInput.value})
-    chatInput.value = ""
-  }
-})
+if(chatInput !== null) {
+  chatInput.addEventListener("keypress", event => {
+    if(event.key === 'Enter'){
+      channel.push("new_msg", {body: chatInput.value})
+      chatInput.value = ""
+    }
+  })
+}
+
+const formattedDate = () => {
+  const now = new Date();
+  return now.toLocaleString('en-GB', { timeZone: 'UTC' })
+}
 
 channel.on("new_msg", payload => {
-  let messageItem = document.createElement("p")
-  messageItem.innerText = `[${Date()}] ${payload.body}`
+  const messageItem = document.createElement("p")
+  const user = payload.user
+  //let msgTypeClass = []
+  //if(user === window.user) {
+    //msgTypeClass = []
+  //} else {
+    //msgTypeClass = []
+  //}
+  //for(let i = 0; i < msgTypeClass.length - 1; i++) {
+    //messageItem.classList.add(msgTypeClass[i])
+  //}
+  messageItem.innerText = `[${formattedDate()}] - ${user}: ${payload.body}`
   messagesContainer.appendChild(messageItem)
 })
 

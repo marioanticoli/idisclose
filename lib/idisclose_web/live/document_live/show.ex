@@ -5,6 +5,7 @@ defmodule IdiscloseWeb.DocumentLive.Show do
   import Idisclose.Utils.Liveview, only: [put_error: 2]
 
   alias Idisclose.Documents
+  alias Idisclose.Documents.{Document, Template}
 
   # This is a module attribute, it's used to define constants in the code
   @generated_docs_path "documents/generated"

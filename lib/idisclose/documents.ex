@@ -323,8 +323,10 @@ defmodule Idisclose.Documents do
       [%Document{}, ...]
 
   """
-  def list_documents(preloads \\ [:template]) do
-    Repo.all(Document) |> Repo.preload(preloads)
+  def list_documents(preloads \\ [:template], where \\ [archived?: false]) do
+    from(d in Document, where: ^where)
+    |> Repo.all()
+    |> Repo.preload(preloads)
   end
 
   @doc """

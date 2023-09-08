@@ -5,7 +5,7 @@ defmodule IdiscloseWeb.DocumentLive.Index do
   import Idisclose.Utils.Liveview, only: [put_error: 2]
 
   alias Idisclose.Documents
-  alias Idisclose.Documents.Document
+  alias Idisclose.Documents.{Document, Template}
 
   @impl true
   def mount(_params, _session, socket) do
@@ -79,6 +79,20 @@ defmodule IdiscloseWeb.DocumentLive.Index do
         stream_delete(socket, :documents, document)
       else
         put_error(socket, :delete)
+      end
+
+    {:noreply, socket}
+  end
+
+  def handle_event("archive", %{"id" => id}, socket) do
+    socket =
+      if authorized?(socket, Document, :archive) do
+        {:ok, document} =
+          id |> Documents.get_document!() |> Documents.update_document(%{archived?: true})
+
+        stream_delete(socket, :documents, document)
+      else
+        put_error(socket, :archive)
       end
 
     {:noreply, socket}

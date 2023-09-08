@@ -1,4 +1,7 @@
 defmodule Idisclose.Scheduler.Worker do
+  @moduledoc """
+  Scheduler worker
+  """
   use Oban.Worker, queue: :events
 
   require Logger

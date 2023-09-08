@@ -20,7 +20,9 @@ defmodule Idisclose.Application do
       IdiscloseWeb.Endpoint,
       # Start a worker by calling: Idisclose.Worker.start_link(arg)
       # {Idisclose.Worker, arg}
-      cluster_child()
+      cluster_child(),
+      # Scheduled jobs 
+      {Oban, Application.fetch_env!(:idisclose, Oban)}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

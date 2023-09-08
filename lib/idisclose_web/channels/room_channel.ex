@@ -11,18 +11,18 @@ defmodule IdiscloseWeb.RoomChannel do
     {:ok, socket}
   end
 
-  def join("room:" <> _private_room_id, _params, _socket) do
-    {:error, %{reason: "unauthorized"}}
+  def join("room:" <> user, _params, %{assigns: %{user: user}} = socket) do
+    {:ok, socket}
   end
 
-  def handle_in("new_msg", %{"body" => body}, socket) do
-    broadcast!(socket, "new_msg", %{body: body, user: socket.assigns.user})
+  def handle_in("broadcast_msg", %{"body" => body}, socket) do
+    broadcast!(socket, "broadcast_msg", %{body: body, user: socket.assigns.user})
     {:noreply, socket}
   end
 
   def handle_info(:after_join, socket) do
     {:ok, _} =
-      Presence.track(socket, socket.assigns.current_user.email, %{
+      Presence.track(socket, socket.assigns.user, %{
         online_at: inspect(System.system_time(:second))
       })
 

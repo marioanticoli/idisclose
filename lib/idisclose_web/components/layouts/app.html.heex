@@ -37,6 +37,16 @@
             <div class="flex items-center space-x-4">
               <span class="text-gray-800"><%= @current_user.email %></span>
               <.link
+                href="#"
+                class="text-gray-800"
+                data-drawer-target="drawer-comms"
+                data-drawer-show="drawer-comms"
+                data-drawer-placement="right"
+                aria-controls="drawer-comms"
+              >
+                Chat & Notifications
+              </.link>
+              <.link
                 href={~p"/users/settings"}
                 class="text-gray-800 hover:text-white hover:bg-orange-400 px-3 py-2 rounded-md text-base font-medium"
               >
@@ -79,9 +89,47 @@
 </main>
 <footer>
   <%= if @current_user do %>
-    <.minimizable_window toggle_text="Chat">
-      <div id="chat-messages" role="log" aria-live="polite"></div>
+    <!-- drawer component -->
+    <div
+      id="drawer-comms"
+      class="fixed top-0 right-0 z-40 h-screen p-4 overflow-y-auto transition-transform translate-x-full bg-white w-80 dark:bg-gray-800"
+      tabindex="-1"
+      aria-labelledby="drawer-right-label"
+    >
+      <h5
+        id="drawer-right-label"
+        class="inline-flex items-center mb-4 text-base font-semibold text-gray-500 dark:text-gray-400"
+      >
+        Right drawer
+      </h5>
+      <button
+        type="button"
+        data-drawer-hide="drawer-comms"
+        aria-controls="drawer-comms"
+        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 absolute top-2.5 right-2.5 inline-flex items-center justify-center dark:hover:bg-gray-600 dark:hover:text-white"
+      >
+        <svg
+          class="w-3 h-3"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 14 14"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+          />
+        </svg>
+        <span class="sr-only">Close menu</span>
+      </button>
+      <div class="grid grid-rows-2 gap-4 mt-auto">
+        <div id="private-messages" class="row-span-1 h-auto"></div>
+        <div id="chat-messages" class="row-span-1 h-auto"></div>
+      </div>
       <input id="chat-input" type="text" />
-    </.minimizable_window>
+    </div>
   <% end %>
 </footer>

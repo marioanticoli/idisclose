@@ -56,14 +56,14 @@ socket.connect()
 // Now that you are connected, you can join channels with a topic.
 // Let's assume you have a channel with a topic named `room` and the
 // subtopic is its id - in this case 42:
-let channel = socket.channel("room:lobby", {})
+let generalChannel = socket.channel("room:lobby", {})
 let chatInput         = document.querySelector("#chat-input")
-let messagesContainer = document.querySelector("#chat-messages")
+let generalMsgContainer = document.querySelector("#chat-messages")
 
 if(chatInput !== null) {
   chatInput.addEventListener("keypress", event => {
     if(event.key === 'Enter'){
-      channel.push("new_msg", {body: chatInput.value})
+      generalChannel.push("broadcast_msg", {body: chatInput.value})
       chatInput.value = ""
     }
   })
@@ -74,7 +74,7 @@ const formattedDate = () => {
   return now.toLocaleString('en-GB', { timeZone: 'UTC' })
 }
 
-channel.on("new_msg", payload => {
+generalChannel.on("broadcast_msg", payload => {
   const messageItem = document.createElement("p")
   const user = payload.user
   //let msgTypeClass = []
@@ -87,11 +87,26 @@ channel.on("new_msg", payload => {
     //messageItem.classList.add(msgTypeClass[i])
   //}
   messageItem.innerText = `[${formattedDate()}] - ${user}: ${payload.body}`
-  messagesContainer.appendChild(messageItem)
+  generalMsgContainer.appendChild(messageItem)
 })
 
-channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
+generalChannel.join()
+  .receive("ok", resp => { console.log("Joined lobby", resp) })
+  .receive("error", resp => { console.log("Unable to join lobby", resp) })
+
+let userChannel = socket.channel(`room:${window.user}`, {})
+let userMsgContainer = document.querySelector("#private-messages")
+
+userChannel.on("new_sys_msg", payload => {
+  console.log(payload)
+  const messageItem = document.createElement("p")
+  const user = payload.user
+  messageItem.innerText = `[${formattedDate()}] - System: ${payload.body}`
+  userMsgContainer.appendChild(messageItem)
+})
+
+userChannel.join()
+  .receive("ok", resp => { console.log("Joined private channel", resp) })
+  .receive("error", resp => { console.log("Unable to join private channel", resp) })
 
 export default socket

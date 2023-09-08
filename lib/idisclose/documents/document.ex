@@ -13,6 +13,7 @@ defmodule Idisclose.Documents.Document do
   schema "documents" do
     field(:deadline, :date)
     field(:title, :string)
+    field(:archived?, :boolean)
 
     belongs_to(:template, Template)
     has_many(:chapters, Chapter)
@@ -23,9 +24,10 @@ defmodule Idisclose.Documents.Document do
   @doc false
   def changeset(%__MODULE__{} = document \\ %__MODULE__{}, attrs) do
     required_fields = [:title, :deadline, :template_id]
+    fields = [:archived? | required_fields]
 
     document
-    |> cast(attrs, required_fields)
+    |> cast(attrs, fields)
     |> validate_required(required_fields)
   end
 end

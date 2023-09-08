@@ -1,6 +1,11 @@
 <.header>
   Listing Documents
   <:actions>
+    <.link patch={~p"/documents/archived"}>
+      <.button>Archived Documents</.button>
+    </.link>
+  </:actions>
+  <:actions>
     <.link patch={~p"/documents/new"}>
       <.button>New Document</.button>
     </.link>
@@ -26,9 +31,17 @@
   <:action :let={{id, document}}>
     <.link
       phx-click={JS.push("delete", value: %{id: document.id}) |> hide("##{id}")}
-      data-confirm="Are you sure?"
+      data-confirm="Are you sure to delete?"
     >
       Delete
+    </.link>
+  </:action>
+  <:action :let={{id, document}}>
+    <.link
+      phx-click={JS.push("archive", value: %{id: document.id}) |> hide("##{id}")}
+      data-confirm="Are you sure you want to archive?"
+    >
+      Archive
     </.link>
   </:action>
 </.table>

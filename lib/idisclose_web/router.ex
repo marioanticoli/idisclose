@@ -100,6 +100,7 @@ defmodule IdiscloseWeb.Router do
 
       # Documents
       live "/documents", DocumentLive.Index, :index
+      live "/documents/archived", DocumentLive.Archive, :index
       live "/documents/new", DocumentLive.Index, :new
       live "/documents/:id/edit", DocumentLive.Index, :edit
 

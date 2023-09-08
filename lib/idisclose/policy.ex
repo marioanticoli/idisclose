@@ -38,6 +38,7 @@ defmodule Idisclose.Policy do
     |> allow(Document, :update)
     |> allow(Document, :delete)
     |> allow(Document, :archive)
+    |> allow(Document, :unarchive)
     # Chapters
     |> allow(Chapter, :create)
     |> allow(Chapter, :read)

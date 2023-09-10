@@ -111,7 +111,8 @@ defmodule Idisclose.PieceTableFacade do
   end
 
   def diff_string(:next, %{to_apply: [edit | _]} = table, template) do
-    %{result: result} = table = PieceTable.redo!(table)
+    result = PieceTable.get_text!(table)
+    table = PieceTable.redo!(table)
 
     {table, build_string_list(result, template, edit)}
   end

@@ -6,6 +6,7 @@ defmodule IdiscloseWeb.DocumentLive.Editor do
 
   alias Idisclose.Documents
   alias Idisclose.PieceTableFacade, as: PieceTable
+  alias Idisclose.Documents.Chapter
 
   @impl true
   def mount(_params, _session, socket) do

@@ -1,4 +1,7 @@
 defmodule IdiscloseWeb.SignalingChannel do
+  @moduledoc """
+  Channel module to comply with ICE requirements
+  """
   use IdiscloseWeb, :channel
 
   @impl true

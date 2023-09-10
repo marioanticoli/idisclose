@@ -5,6 +5,7 @@ defmodule IdiscloseWeb.TemplateLive.Show do
   import Idisclose.Utils.Liveview, only: [put_error: 2]
 
   alias Idisclose.Documents
+  alias Idisclose.Documents.{Section, Template, SectionTemplate}
 
   @impl true
   def mount(_params, _session, socket) do
@@ -20,7 +21,7 @@ defmodule IdiscloseWeb.TemplateLive.Show do
            authorized?(socket, SectionTemplate, action) do
         socket
         |> assign(:page_title, page_title(socket.assigns.live_action))
-        |> assign(:section, Documents.get_section!(id))
+        |> assign(:template, Documents.get_template!(id))
 
         template = Documents.get_template!(id)
         page_title = page_title(socket.assigns.live_action)

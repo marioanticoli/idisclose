@@ -2,7 +2,7 @@ defmodule IdiscloseWeb.DocumentLive.Version do
   use IdiscloseWeb, :live_view
 
   alias Idisclose.Documents
-  alias Idisclose.PieceTableFacade, as: PieceTable
+  alias Idisclose.PieceTableFacade, as: Facade
 
   @impl true
   def mount(_params, _session, socket) do
@@ -22,9 +22,9 @@ defmodule IdiscloseWeb.DocumentLive.Version do
     chapter = Documents.get_chapter!(chapter_id)
 
     socket =
-      case PieceTable.load(document_id, chapter_id) do
-        {:ok, t} ->
-          {table, diff} = PieceTable.diff_string(:prev, t, @diff_template)
+      case Facade.load(document_id, chapter_id) do
+        {:ok, table} ->
+          diff = PieceTable.get_text!(table)
 
           socket
           |> assign(:table, table)
@@ -42,9 +42,9 @@ defmodule IdiscloseWeb.DocumentLive.Version do
   @impl true
   def handle_event(event, _params, socket) when event in ~w(next prev) do
     {table, diff} =
-      event |> String.to_atom() |> PieceTable.diff_string(socket.assigns.table, @diff_template)
+      event |> String.to_atom() |> Facade.diff_string(socket.assigns.table, @diff_template)
 
-    diff = IO.iodata_to_binary(diff)
+    diff = IO.iodata_to_binary(diff) 
 
     socket =
       socket

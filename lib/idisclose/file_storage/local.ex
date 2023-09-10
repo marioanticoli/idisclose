@@ -1,4 +1,7 @@
 defmodule Idisclose.FileStorage.Local do
+  @moduledoc """
+  Local implementation of FileStorage behaviour
+  """
   @behaviour Idisclose.FileStorage
 
   @storage_path Application.compile_env!(:idisclose, :file_storage)[:local_path]

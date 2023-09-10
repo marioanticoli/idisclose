@@ -44,7 +44,7 @@ defmodule IdiscloseWeb.DocumentLive.Version do
     {table, diff} =
       event |> String.to_atom() |> Facade.diff_string(socket.assigns.table, @diff_template)
 
-    diff = IO.iodata_to_binary(diff) 
+    diff = IO.iodata_to_binary(diff)
 
     socket =
       socket

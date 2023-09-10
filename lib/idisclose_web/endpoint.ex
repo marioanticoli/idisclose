@@ -25,7 +25,7 @@ defmodule IdiscloseWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :idisclose,
-    gzip: false,
+    gzip: true,
     only: IdiscloseWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the

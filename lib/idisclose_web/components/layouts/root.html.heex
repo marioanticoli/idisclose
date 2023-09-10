@@ -8,10 +8,12 @@
       <%= assigns[:page_title] || "Idisclose" %>
     </.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
-    <script>
-      window.user = "<%= get_in(assigns, [:current_user, Access.key!(:email)]) %>";
-      window.userToken = "<%= assigns[:user_token] %>";
-    </script>
+    <%= if @current_user do %>
+      <script>
+        window.user = "<%= get_in(assigns, [:current_user, Access.key!(:email)]) %>";
+        window.userToken = "<%= assigns[:user_token] %>";
+      </script>
+    <% end %>
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>

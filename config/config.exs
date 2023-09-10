@@ -79,6 +79,25 @@ config :idisclose, Oban,
   plugins: [Oban.Plugins.Pruner],
   queues: [default: 10]
 
+########################
+# TURN server 
+########################
+
+config :mongooseice, :turn_servers, [
+  %{
+    auth_type: :userpass,
+    transport: :udp,
+    listening_ip: "0.0.0.0",
+    listening_port: 3478,
+    relay_ip: {127, 0, 0, 1},
+    relay_port: 3478,
+    relay_type: :turn_udp,
+    relay_auth_method: :userpass,
+    relay_username: System.get_env("TURN_USER", "default"),
+    relay_credential: System.get_env("TURN_PASS", "default")
+  }
+]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

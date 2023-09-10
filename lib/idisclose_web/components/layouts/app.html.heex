@@ -38,13 +38,20 @@
               <span class="text-gray-800"><%= @current_user.email %></span>
               <.link
                 href="#"
-                class="text-gray-800"
+                class="text-gray-800 hover:text-white hover:bg-orange-400 px-3 py-2 rounded-md text-base font-medium"
                 data-drawer-target="drawer-comms"
                 data-drawer-show="drawer-comms"
                 data-drawer-placement="right"
                 aria-controls="drawer-comms"
               >
-                Chat & Notifications
+                Comms
+              </.link>
+              <.link
+                target="_blank"
+                href={~p"/videochat"}
+                class="text-gray-800 hover:text-white hover:bg-orange-400 px-3 py-2 rounded-md text-base font-medium"
+              >
+                Videochat
               </.link>
               <.link
                 href={~p"/users/settings"}

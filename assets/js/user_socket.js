@@ -8,48 +8,6 @@ import {Socket} from "phoenix"
 // token for authentication. Read below how it should be used.
 let socket = new Socket("/socket", {params: {token: window.userToken, user: window.user}})
 
-// When you connect, you'll often need to authenticate the client.
-// For example, imagine you have an authentication plug, `MyAuth`,
-// which authenticates the session and assigns a `:current_user`.
-// If the current user exists you can assign the user's token in
-// the connection for use in the layout.
-//
-// In your "lib/idisclose_web/router.ex":
-//
-//     pipeline :browser do
-//       ...
-//       plug MyAuth
-//       plug :put_user_token
-//     end
-//
-//     defp put_user_token(conn, _) do
-//       if current_user = conn.assigns[:current_user] do
-//         token = Phoenix.Token.sign(conn, "user socket", current_user.id)
-//         assign(conn, :user_token, token)
-//       else
-//         conn
-//       end
-//     end
-//
-// Now you need to pass this token to JavaScript. You can do so
-// inside a script tag in "lib/idisclose_web/templates/layout/app.html.heex":
-//
-//     <script>window.userToken = "<%= assigns[:user_token] %>";</script>
-//
-// You will need to verify the user token in the "connect/3" function
-// in "lib/idisclose_web/channels/user_socket.ex":
-//
-//     def connect(%{"token" => token}, socket, _connect_info) do
-//       # max_age: 1209600 is equivalent to two weeks in seconds
-//       case Phoenix.Token.verify(socket, "user socket", token, max_age: 1_209_600) do
-//         {:ok, user_id} ->
-//           {:ok, assign(socket, :user, user_id)}
-//
-//         {:error, reason} ->
-//           :error
-//       end
-//     end
-//
 // Finally, connect to the socket:
 socket.connect()
 
@@ -98,7 +56,6 @@ let userChannel = socket.channel(`room:${window.user}`, {})
 let userMsgContainer = document.querySelector("#private-messages")
 
 userChannel.on("new_sys_msg", payload => {
-  console.log(payload)
   const messageItem = document.createElement("p")
   const user = payload.user
   messageItem.innerText = `[${formattedDate()}] - System: ${payload.body}`
@@ -108,5 +65,124 @@ userChannel.on("new_sys_msg", payload => {
 userChannel.join()
   .receive("ok", resp => { console.log("Joined private channel", resp) })
   .receive("error", resp => { console.log("Unable to join private channel", resp) })
+
+let signalingChannel = socket.channel("signaling:lobby", {})
+const localVideo = document.getElementById("localVideo");
+const remoteVideo = document.getElementById("remoteVideo");
+const callButton = document.getElementById("callButton");
+const hangupButton = document.getElementById("hangupButton");
+const configuration = {iceServers: [
+  {urls: "stun:127.0.0.1:32323"},
+  {urls: "turn:127.0.0.1:3478", username: "default", credential: "default"}
+]};
+const peerConnection = new RTCPeerConnection(configuration);
+
+signalingChannel
+  .join()
+  .receive("ok", (resp) => {
+    console.log("Joined signaling channel", resp);
+  })
+  .receive("error", (resp) => {
+    console.log("Unable to join signaling channel", resp);
+  });
+
+signalingChannel.on("offer", async (payload) => {
+  // Create an RTCSessionDescription object from the received offer
+  const remoteOffer = new RTCSessionDescription(payload);
+
+  // Set the remote description with the received offer
+  await peerConnection.setRemoteDescription(remoteOffer);
+
+  // Create an answer and set it as the local description
+  const answer = await peerConnection.createAnswer();
+  await peerConnection.setLocalDescription(answer);
+
+  // Send the answer to the other peer
+  await sendAnswerToOtherPeer(answer);
+});
+
+signalingChannel.on("answer", async (payload) => {
+  // Handle incoming answers from the remote peer here
+  const remoteAnswer = new RTCSessionDescription(payload);
+  if (peerConnection.signalingState === "have-local-offer") {
+    // If the connection is in the "stable" state, set the remote description immediately
+    await peerConnection.setRemoteDescription(remoteAnswer);
+  } else {
+    // If the connection is not in the "stable" state, queue the remote description and wait for
+    // the "negotiationneeded" event to handle it
+    peerConnection.pendingRemoteDescription = remoteAnswer;
+  }
+});
+
+signalingChannel.on("ice_candidate", async (payload) => {
+  // Handle incoming ICE candidates from the remote peer here
+  const candidate = new RTCIceCandidate(payload);
+  if (candidate.usernameFragment === payload.usernameFragment) {
+    return;
+  }
+  await peerConnection.addIceCandidate(candidate);
+});
+
+peerConnection.onnegotiationneeded = async () => {
+  // Request access to the local media.
+  const constraints = {
+    video: true,
+    audio: true,
+  };
+  const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+  // Add the local video stream to the DOM.
+  localVideo.srcObject = stream;
+
+  // Add the tracks from the local stream to the peer connection
+  stream.getTracks().forEach((track) => {
+    peerConnection.addTrack(track, stream);
+  });
+
+  // Create an offer and send it to the other peer.
+  const offer = await peerConnection.createOffer();
+  peerConnection.setLocalDescription(offer);
+  await sendOfferToOtherPeer(offer);
+};
+
+peerConnection.onicecandidate = async (event) => {
+  // Send the ICE candidate to the other peer.
+  if (event.candidate) {
+    await sendIceCandidateToOtherPeer(event.candidate);
+  }
+};
+
+peerConnection.ontrack = async (event) => {
+   // Add the remote video stream to the DOM.
+  remoteVideo.srcObject = event.streams[0];
+};
+
+async function sendOfferToOtherPeer(offer) {
+  // Send the offer to the other peer
+  signalingChannel.push("offer", offer);
+}
+
+async function sendAnswerToOtherPeer(answer) {
+  // Send the answer to the other peer
+  signalingChannel.push("answer", answer);
+}
+
+async function sendIceCandidateToOtherPeer(candidate) {
+  // Send the ICE candidate to the other peer
+  signalingChannel.push("ice_candidate", candidate);
+}
+
+// Add click event listeners to call and hangup buttons
+callButton.addEventListener("click", () => {
+  // You can initiate the call here, e.g., when the "Call" button is clicked
+  peerConnection.onnegotiationneeded();
+});
+
+hangupButton.addEventListener("click", () => {
+  // You can end the call here, e.g., when the "Hang Up" button is clicked
+  peerConnection.close();
+  localVideo.srcObject = null;
+  remoteVideo.srcObject = null;
+});
 
 export default socket

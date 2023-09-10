@@ -1,4 +1,7 @@
 defmodule Idisclose.FileStorage.S3 do
+  @moduledoc """
+  S3 implementation of FileStorage behaviour
+  """
   @behaviour Idisclose.FileStorage
 
   alias ExAws.S3

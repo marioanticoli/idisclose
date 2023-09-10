@@ -79,6 +79,40 @@ config :idisclose, Oban,
   plugins: [Oban.Plugins.Pruner],
   queues: [default: 10]
 
+########################
+# FileStorage
+########################
+
+config :idisclose, :file_storage,
+  # To use S3 change to Idisclose.FileStorage.S3
+  impl: Idisclose.FileStorage.Local,
+  # Default path for Local implementation
+  local_path: "priv/data",
+  # Default region for S3 implementation
+  region: ""
+
+########################
+# AWS
+########################
+
+config :ex_aws,
+  debug_requests: true,
+  json_codec: Jason,
+  access_key_id: System.get_env("AWS_ACCESS_KEY", "AKIAIOSFODNN7EXAMPLE"),
+  secret_access_key:
+    System.get_env("SECRET_ACCESS_KEY", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY")
+
+########################
+# S3
+########################
+
+port = System.get_env("S3_PORT", "9444") |> String.to_integer()
+
+config :ex_aws, :s3,
+  scheme: System.get_env("S3_SCHEME", "http://"),
+  host: System.get_env("S3_HOST", "localhost"),
+  port: port
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

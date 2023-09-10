@@ -3,6 +3,8 @@ defmodule Idisclose.PieceTableFacade do
   Facade to simplify intereaction with the PieceTable library
   """
 
+  alias Idisclose.FileStorage.Fs
+
   # delegate the execution to PieceTable library
   defdelegate new!(text), to: PieceTable
   defdelegate diff!(table, text, user), to: PieceTable.Differ
@@ -10,18 +12,15 @@ defmodule Idisclose.PieceTableFacade do
   defdelegate undo!(table), to: PieceTable
   defdelegate redo!(table), to: PieceTable
 
-  @storage_path "priv/data"
-
   @type template :: %{
           ins: String.t(),
           del: String.t(),
           edit: String.t()
         }
 
-  @spec load(String.t(), String.t()) :: {:ok, PieceTable.t()} | {:error, File.posix()}
+  @spec load(String.t(), String.t()) :: {:ok, PieceTable.t()} | {:error, any()}
   def load(document_id, chapter_id) do
-    with {:ok, raw_content} <-
-           [@storage_path, document_id, chapter_id] |> Path.join() |> File.read(),
+    with {:ok, raw_content} <- Fs.file_read(document_id, chapter_id),
          {:ok, params} <- Jason.decode(raw_content, keys: :atoms) do
       applied = Enum.map(params.applied, &rebuild_changes/1)
       to_apply = Enum.map(params.to_apply, &rebuild_changes/1)
@@ -45,12 +44,9 @@ defmodule Idisclose.PieceTableFacade do
   @spec save(PieceTable.t(), String.t(), String.t()) ::
           {:ok, PieceTable.t()} | {:error, PieceTable.t()}
   def save(table, document_id, chapter_id) do
-    path_dir = Path.join(@storage_path, document_id)
-    maybe_mkdir(path_dir)
-
-    with {:ok, raw_content} <- table |> map_from_struct() |> Jason.encode(),
-         path <- Path.join(path_dir, chapter_id),
-         :ok <- File.write(path, raw_content) do
+    with :ok <- maybe_mkdir(document_id),
+         {:ok, raw_content} <- table |> map_from_struct() |> Jason.encode(),
+         :ok <- Fs.file_write(document_id, chapter_id, raw_content) do
       # execute only if all conditions are true 
       {:ok, table}
     else
@@ -70,8 +66,10 @@ defmodule Idisclose.PieceTableFacade do
   defp map_from_struct_list(list) when is_list(list), do: Enum.map(list, &Map.from_struct/1)
 
   defp maybe_mkdir(path_dir) do
-    if not File.dir?(path_dir) do
-      File.mkdir(path_dir)
+    if Fs.dir?(path_dir) do
+      :ok
+    else
+      Fs.mkdir(path_dir)
     end
   end
 

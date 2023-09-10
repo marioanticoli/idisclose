@@ -73,7 +73,11 @@ defmodule Idisclose.MixProject do
       # auth-z 
       {:ex_janus, "~> 0.3.2"},
       # schedule jobs 
-      {:oban, "~> 2.15"}
+      {:oban, "~> 2.15"},
+      # s3
+      {:ex_aws, "~> 2.5"},
+      {:ex_aws_s3, "~> 2.4"},
+      {:hackney, "~> 1.18"}
     ]
   end
 

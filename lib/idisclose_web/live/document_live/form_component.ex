@@ -77,6 +77,9 @@ defmodule IdiscloseWeb.DocumentLive.FormComponent do
   defp save_document(socket, :new, document_params) do
     case Documents.create_document(document_params) do
       {:ok, document} ->
+        # TODO: modify to use transactions
+        schedule_deadline_notification(document, socket.assigns.current_user.email)
+
         notify_parent({:saved, document})
 
         {:noreply,
@@ -87,6 +90,19 @@ defmodule IdiscloseWeb.DocumentLive.FormComponent do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
     end
+  end
+
+  defp schedule_deadline_notification(document, user) do
+    msg = "Deadline for document '#{document.title}' will expire tomorrow."
+    time = Time.new!(0, 0, 0)
+    deadline = document.deadline |> DateTime.new!(time, "Etc/UTC") |> DateTime.add(-24, :hour)
+
+    Idisclose.Scheduler.Worker.schedule(
+      user,
+      msg,
+      deadline,
+      document.id
+    )
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do

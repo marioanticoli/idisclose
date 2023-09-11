@@ -41,6 +41,12 @@ defmodule Idisclose.PieceTableFacade do
     struct(PieceTable.Change, change)
   end
 
+  @spec get_text!(String.t(), String.t()) :: binary()
+  def get_text!(document_id, chapter_id) do
+    {:ok, table} = load(document_id, chapter_id)
+    PieceTable.get_text!(table)
+  end
+
   @spec save(PieceTable.t(), String.t(), String.t()) ::
           {:ok, PieceTable.t()} | {:error, PieceTable.t()}
   def save(table, document_id, chapter_id) do

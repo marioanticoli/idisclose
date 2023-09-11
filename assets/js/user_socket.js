@@ -76,17 +76,11 @@ const configuration = {
 		username: "prYipP7xJxFteeZWH63FN9WqENqgXfojSJ_qzzVWsbVT6mUbAXnfdVbz29WkQ1AoAAAAAGT_JaFtYXJpb2FudGljb2xp",
 		urls: [
 			"stun:fr-turn3.xirsys.com",
-			"turn:fr-turn3.xirsys.com:80?transport=udp",
 			"turn:fr-turn3.xirsys.com:3478?transport=udp",
-			"turn:fr-turn3.xirsys.com:80?transport=tcp",
-			"turn:fr-turn3.xirsys.com:3478?transport=tcp",
-			"turns:fr-turn3.xirsys.com:443?transport=tcp",
-			"turns:fr-turn3.xirsys.com:5349?transport=tcp"
 		],
 		credential: "6b4c4e36-50b0-11ee-a51b-0242ac120004"
 	}]
 }
-console.log(configuration);
 const peerConnection = new RTCPeerConnection(configuration);
 
 signalingChannel

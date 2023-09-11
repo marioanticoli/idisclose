@@ -7,9 +7,6 @@ defmodule IdiscloseWeb.DocumentLive.Show do
   alias Idisclose.Documents
   alias Idisclose.Documents.{Document, Template}
 
-  # This is a module attribute, it's used to define constants in the code
-  @generated_docs_path "documents/generated"
-
   @impl true
   def mount(_params, _session, socket) do
     {:ok, socket}
@@ -54,9 +51,9 @@ defmodule IdiscloseWeb.DocumentLive.Show do
           put_error(socket, :generate)
 
         document ->
-          filename = "#{document.title}.pdf"
+          generate_pdf(document.chapters, "#{document.title}.pdf")
 
-          generate_pdf(document.chapters, filename)
+          socket
       end
 
     {:noreply, socket}
@@ -83,7 +80,8 @@ defmodule IdiscloseWeb.DocumentLive.Show do
 
   defp generate_pdf(chapters, filename) do
     Enum.flat_map(chapters, fn chapter ->
-      [wrap_html(chapter.title, "h1"), chapter.body]
+      body = Idisclose.PieceTableFacade.get_text!(chapter.document_id, chapter.id)
+      [wrap_html(chapter.title, "h1"), body]
     end)
     |> IO.iodata_to_binary()
     |> PdfGenerator.generate_binary()
@@ -91,10 +89,10 @@ defmodule IdiscloseWeb.DocumentLive.Show do
   end
 
   defp write_pdf({:ok, content}, filename) do
-    ["./priv/static", @generated_docs_path, filename]
-    |> Path.join()
-    |> Path.expand()
-    |> File.write(content)
+    alias Idisclose.FileStorage.Fs
+
+    if not Fs.dir?("generated"), do: Fs.mkdir("generated")
+    Fs.file_write("generated", filename, content)
   end
 
   defp wrap_html(content, tag), do: "<#{tag}>#{content}</#{tag}>"

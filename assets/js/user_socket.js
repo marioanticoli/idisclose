@@ -72,7 +72,7 @@ const remoteVideo = document.getElementById("remoteVideo");
 const callButton = document.getElementById("callButton");
 const hangupButton = document.getElementById("hangupButton");
 const configuration = {
-	iceServers: {
+	iceServers: [{
 		username: "prYipP7xJxFteeZWH63FN9WqENqgXfojSJ_qzzVWsbVT6mUbAXnfdVbz29WkQ1AoAAAAAGT_JaFtYXJpb2FudGljb2xp",
 		urls: [
 			"stun:fr-turn3.xirsys.com",
@@ -84,8 +84,9 @@ const configuration = {
 			"turns:fr-turn3.xirsys.com:5349?transport=tcp"
 		],
 		credential: "6b4c4e36-50b0-11ee-a51b-0242ac120004"
-	}
+	}]
 }
+console.log(configuration);
 const peerConnection = new RTCPeerConnection(configuration);
 
 signalingChannel
@@ -184,12 +185,12 @@ async function sendIceCandidateToOtherPeer(candidate) {
 }
 
 // Add click event listeners to call and hangup buttons
-callButton.addEventListener("click", () => {
+if(callButton !== null) callButton.addEventListener("click", () => {
   // You can initiate the call here, e.g., when the "Call" button is clicked
   peerConnection.onnegotiationneeded();
 });
 
-hangupButton.addEventListener("click", () => {
+if(hangupButton !== null) hangupButton.addEventListener("click", () => {
   // You can end the call here, e.g., when the "Hang Up" button is clicked
   peerConnection.close();
   localVideo.srcObject = null;

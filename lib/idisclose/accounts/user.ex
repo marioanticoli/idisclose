@@ -47,10 +47,12 @@ defmodule Idisclose.Accounts.User do
       Defaults to `true`.
   """
   def registration_changeset(user, attrs, opts \\ []) do
+    IO.inspect(attrs)
     user
     |> cast(attrs, [:email, :password])
     |> validate_email(opts)
     |> validate_password(opts)
+    |> IO.inspect()
   end
 
   defp validate_email(changeset, opts) do

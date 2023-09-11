@@ -60,8 +60,7 @@
                 Settings
               </.link>
               <.link
-                href={~p"/users/log_out"}
-                method="delete"
+                phx-click={JS.push("logout", value: %{})}
                 class="text-gray-800 hover:text-white hover:bg-orange-400 px-3 py-2 rounded-md text-base font-medium"
               >
                 Logout

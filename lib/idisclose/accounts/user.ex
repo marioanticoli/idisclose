@@ -48,6 +48,7 @@ defmodule Idisclose.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     IO.inspect(attrs)
+
     user
     |> cast(attrs, [:email, :password])
     |> validate_email(opts)

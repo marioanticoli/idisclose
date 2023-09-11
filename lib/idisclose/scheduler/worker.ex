@@ -2,7 +2,9 @@ defmodule Idisclose.Scheduler.Worker do
   @moduledoc """
   Scheduler worker
   """
-  use Oban.Worker, queue: :events
+  use Oban.Worker,
+    queue: :events,
+    max_attempts: 3
 
   require Logger
 
@@ -17,13 +19,11 @@ defmodule Idisclose.Scheduler.Worker do
     :ok
   end
 
-  @spec schedule(String.t(), String.t(), DateTime.t(), String.t()) ::
+  @spec schedule(String.t(), String.t(), DateTime.t(), any(), String.t()) ::
           {:ok, Oban.Job.t()} | {:error, Oban.Job.changeset() | term}
-  def schedule(user, msg, datetime, type \\ "sys_msg") do
-    attrs = %{id: "#{type}_#{user}", message: msg}
-
-    attrs
+  def schedule(user, msg, datetime, ref, type \\ "sys_msg") do
+    %{id: "#{type}_#{user}", message: msg, ref: ref}
     |> __MODULE__.new(scheduled_at: datetime, queue: :default)
-    |> Oban.insert()
+    |> Oban.insert(unique: [period: :infinity, fields: [:args], keys: [:ref]])
   end
 end

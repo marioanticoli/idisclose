@@ -73,9 +73,7 @@ defmodule Idisclose.MixProject do
       # auth-z 
       {:ex_janus, "~> 0.3.2"},
       # schedule jobs 
-      {:oban, "~> 2.15"},
-      # stun/turn server 
-      {:mongooseice, "~> 0.4.0"}
+      {:oban, "~> 2.15"}
     ]
   end
 

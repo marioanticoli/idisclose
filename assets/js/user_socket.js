@@ -71,10 +71,21 @@ const localVideo = document.getElementById("localVideo");
 const remoteVideo = document.getElementById("remoteVideo");
 const callButton = document.getElementById("callButton");
 const hangupButton = document.getElementById("hangupButton");
-const configuration = {iceServers: [
-  {urls: "stun:127.0.0.1:32323"},
-  {urls: "turn:127.0.0.1:3478", username: "default", credential: "default"}
-]};
+const configuration = {
+	iceServers: {
+		username: "prYipP7xJxFteeZWH63FN9WqENqgXfojSJ_qzzVWsbVT6mUbAXnfdVbz29WkQ1AoAAAAAGT_JaFtYXJpb2FudGljb2xp",
+		urls: [
+			"stun:fr-turn3.xirsys.com",
+			"turn:fr-turn3.xirsys.com:80?transport=udp",
+			"turn:fr-turn3.xirsys.com:3478?transport=udp",
+			"turn:fr-turn3.xirsys.com:80?transport=tcp",
+			"turn:fr-turn3.xirsys.com:3478?transport=tcp",
+			"turns:fr-turn3.xirsys.com:443?transport=tcp",
+			"turns:fr-turn3.xirsys.com:5349?transport=tcp"
+		],
+		credential: "6b4c4e36-50b0-11ee-a51b-0242ac120004"
+	}
+}
 const peerConnection = new RTCPeerConnection(configuration);
 
 signalingChannel

@@ -76,6 +76,8 @@ defmodule IdiscloseWeb.Router do
   scope "/", IdiscloseWeb do
     pipe_through [:browser, :require_authenticated_user]
 
+    get("/videochat", VideoChatController, :video)
+
     live_session :require_authenticated_user,
       on_mount: [{IdiscloseWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit

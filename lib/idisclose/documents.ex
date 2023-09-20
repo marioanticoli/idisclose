@@ -448,7 +448,7 @@ defmodule Idisclose.Documents do
       ** (Ecto.NoResultsError)
 
   """
-  def get_chapter!(id), do: Repo.get!(Chapter, id)
+  def get_chapter!(id, preload \\ []), do: Repo.get!(Chapter, id) |> Repo.preload(preload)
 
   @doc """
   Creates a chapter.

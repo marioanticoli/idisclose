@@ -11,6 +11,7 @@ defmodule IdiscloseWeb.UserSocket do
   # pointing to the `IdiscloseWeb.RoomChannel`:
 
   channel "room:*", IdiscloseWeb.RoomChannel
+  channel "signaling:lobby", IdiscloseWeb.SignalingChannel
 
   # To create a channel file, use the mix task:
   #

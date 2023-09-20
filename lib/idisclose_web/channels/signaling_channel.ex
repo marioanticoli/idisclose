@@ -4,9 +4,11 @@ defmodule IdiscloseWeb.SignalingChannel do
   """
   use IdiscloseWeb, :channel
 
+  alias IdiscloseWeb.Presence
+
   @impl true
   def join("signaling:lobby", _payload, socket) do
-    # peer_id = payload["peer_id"]
+    send(self(), :after_join)
     {:ok, socket}
   end
 
@@ -28,6 +30,18 @@ defmodule IdiscloseWeb.SignalingChannel do
   @impl true
   def handle_in("ice_candidate", payload, socket) do
     broadcast(socket, "ice_candidate", payload)
+    {:noreply, socket}
+  end
+
+  # Generic message receiver
+  @impl true
+  def handle_info(:after_join, socket) do
+    {:ok, _} =
+      Presence.track(socket, socket.assigns.user, %{
+        online_at: inspect(System.system_time(:second))
+      })
+
+    push(socket, "presence_state", Presence.list(socket))
     {:noreply, socket}
   end
 end

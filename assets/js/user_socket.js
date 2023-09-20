@@ -2,86 +2,90 @@
 // you uncomment its entry in "assets/js/app.js".
 
 // Bring in Phoenix channels client library:
-import {Socket} from "phoenix"
+import { Socket } from "phoenix";
 
 // And connect to the path in "lib/idisclose_web/endpoint.ex". We pass the
 // token for authentication. Read below how it should be used.
-let socket = new Socket("/socket", {params: {token: window.userToken, user: window.user}})
+let socket = new Socket("/socket", {
+  params: { token: window.userToken, user: window.user },
+});
 
 // Finally, connect to the socket:
-socket.connect()
+socket.connect();
 
-// Now that you are connected, you can join channels with a topic.
-// Let's assume you have a channel with a topic named `room` and the
-// subtopic is its id - in this case 42:
-let generalChannel = socket.channel("room:lobby", {})
-let chatInput         = document.querySelector("#chat-input")
-let generalMsgContainer = document.querySelector("#chat-messages")
+// Channel for notifications
+let generalChannel = socket.channel("room:lobby", {});
+let chatInput = document.querySelector("#chat-input");
+let generalMsgContainer = document.querySelector("#chat-messages");
 
-if(chatInput !== null) {
-  chatInput.addEventListener("keypress", event => {
-    if(event.key === 'Enter'){
-      generalChannel.push("broadcast_msg", {body: chatInput.value})
-      chatInput.value = ""
+if (chatInput !== null) {
+  chatInput.addEventListener("keypress", (event) => {
+    if (event.key === "Enter") {
+      generalChannel.push("broadcast_msg", { body: chatInput.value });
+      chatInput.value = "";
     }
-  })
+  });
 }
 
 const formattedDate = () => {
   const now = new Date();
-  return now.toLocaleString('en-GB', { timeZone: 'UTC' })
-}
+  return now.toLocaleString("en-GB", { timeZone: "UTC" });
+};
 
-generalChannel.on("broadcast_msg", payload => {
-  const messageItem = document.createElement("p")
-  const user = payload.user
+generalChannel.on("broadcast_msg", (payload) => {
+  const messageItem = document.createElement("p");
+  const user = payload.user;
   //let msgTypeClass = []
   //if(user === window.user) {
-    //msgTypeClass = []
+  //msgTypeClass = []
   //} else {
-    //msgTypeClass = []
+  //msgTypeClass = []
   //}
   //for(let i = 0; i < msgTypeClass.length - 1; i++) {
-    //messageItem.classList.add(msgTypeClass[i])
+  //messageItem.classList.add(msgTypeClass[i])
   //}
-  messageItem.innerText = `[${formattedDate()}] - ${user}: ${payload.body}`
-  generalMsgContainer.appendChild(messageItem)
-})
+  messageItem.innerText = `[${formattedDate()}] - ${user}: ${payload.body}`;
+  generalMsgContainer.appendChild(messageItem);
+});
 
-generalChannel.join()
-  .receive("ok", resp => { console.log("Joined lobby", resp) })
-  .receive("error", resp => { console.log("Unable to join lobby", resp) })
+generalChannel
+  .join()
+  .receive("ok", (resp) => {
+    console.log("Joined lobby", resp);
+  })
+  .receive("error", (resp) => {
+    console.log("Unable to join lobby", resp);
+  });
 
-let userChannel = socket.channel(`room:${window.user}`, {})
-let userMsgContainer = document.querySelector("#private-messages")
+// Channel for user chat
+let userChannel = socket.channel(`room:${window.user}`, {});
+let userMsgContainer = document.querySelector("#private-messages");
 
-userChannel.on("new_sys_msg", payload => {
-  const messageItem = document.createElement("p")
-  const user = payload.user
-  messageItem.innerText = `[${formattedDate()}] - System: ${payload.body}`
-  userMsgContainer.appendChild(messageItem)
-})
+userChannel.on("new_sys_msg", (payload) => {
+  const messageItem = document.createElement("p");
+  //const user = payload.user;
+  messageItem.innerText = `[${formattedDate()}] - System: ${payload.body}`;
+  userMsgContainer.appendChild(messageItem);
+});
 
-userChannel.join()
-  .receive("ok", resp => { console.log("Joined private channel", resp) })
-  .receive("error", resp => { console.log("Unable to join private channel", resp) })
+userChannel
+  .join()
+  .receive("ok", (resp) => {
+    console.log("Joined private channel", resp);
+  })
+  .receive("error", (resp) => {
+    console.log("Unable to join private channel", resp);
+  });
 
-let signalingChannel = socket.channel("signaling:lobby", {})
-const localVideo = document.getElementById("localVideo");
-const remoteVideo = document.getElementById("remoteVideo");
-const callButton = document.getElementById("callButton");
-const hangupButton = document.getElementById("hangupButton");
-const configuration = {
-	iceServers: [{
-		username: "prYipP7xJxFteeZWH63FN9WqENqgXfojSJ_qzzVWsbVT6mUbAXnfdVbz29WkQ1AoAAAAAGT_JaFtYXJpb2FudGljb2xp",
-		urls: [
-			"stun:fr-turn3.xirsys.com",
-			"turn:fr-turn3.xirsys.com:3478?transport=udp",
-		],
-		credential: "6b4c4e36-50b0-11ee-a51b-0242ac120004"
-	}]
-}
-const peerConnection = new RTCPeerConnection(configuration);
+// Channel for WebRTC signaling
+let signalingChannel = socket.channel("signaling:lobby", {});
+
+let callAllowed = false;
+let inCall = false;
+const callBtn = document.getElementById("call-btn");
+const leaveBtn = document.getElementById("leave-btn");
+const cameraBtn = document.getElementById("camera-btn");
+const micBtn = document.getElementById("mic-btn");
 
 signalingChannel
   .join()
@@ -92,103 +96,158 @@ signalingChannel
     console.log("Unable to join signaling channel", resp);
   });
 
-signalingChannel.on("offer", async (payload) => {
-  // Create an RTCSessionDescription object from the received offer
-  const remoteOffer = new RTCSessionDescription(payload);
-
-  // Set the remote description with the received offer
-  await peerConnection.setRemoteDescription(remoteOffer);
-
-  // Create an answer and set it as the local description
-  const answer = await peerConnection.createAnswer();
-  await peerConnection.setLocalDescription(answer);
-
-  // Send the answer to the other peer
-  await sendAnswerToOtherPeer(answer);
+signalingChannel.on("presence_state", async (payload) => {
+  console.log("presence:", Object.entries(payload).length);
+  if (Object.entries(payload).length > 1) {
+    callBtn.classList.remove("disabled");
+    callAllowed = true;
+  }
 });
 
-signalingChannel.on("answer", async (payload) => {
-  // Handle incoming answers from the remote peer here
-  const remoteAnswer = new RTCSessionDescription(payload);
-  if (peerConnection.signalingState === "have-local-offer") {
-    // If the connection is in the "stable" state, set the remote description immediately
-    await peerConnection.setRemoteDescription(remoteAnswer);
-  } else {
-    // If the connection is not in the "stable" state, queue the remote description and wait for
-    // the "negotiationneeded" event to handle it
-    peerConnection.pendingRemoteDescription = remoteAnswer;
+signalingChannel.on("offer", async (payload) => {
+  console.log("on offer", payload);
+  if (payload.sender !== window.user) {
+    createAnswer(payload.offer);
   }
 });
 
 signalingChannel.on("ice_candidate", async (payload) => {
-  // Handle incoming ICE candidates from the remote peer here
-  const candidate = new RTCIceCandidate(payload);
-  if (candidate.usernameFragment === payload.usernameFragment) {
-    return;
+  if (peerConnection) {
+    await peerConnection.addIceCandidate(payload.candidate);
   }
-  await peerConnection.addIceCandidate(candidate);
 });
 
-peerConnection.onnegotiationneeded = async () => {
-  // Request access to the local media.
-  const constraints = {
-    video: true,
-    audio: true,
-  };
-  const stream = await navigator.mediaDevices.getUserMedia(constraints);
+signalingChannel.on("answer", async (payload) => {
+  console.log("on answer", payload);
+  if (payload.sender !== window.user) {
+    addAnswer(payload.answer);
+  }
+});
 
-  // Add the local video stream to the DOM.
-  localVideo.srcObject = stream;
+let localStream;
+let remoteStream;
+let peerConnection;
 
-  // Add the tracks from the local stream to the peer connection
-  stream.getTracks().forEach((track) => {
-    peerConnection.addTrack(track, stream);
+const servers = {
+  iceServers: [
+    {
+      urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"],
+    },
+  ],
+};
+
+const videoParams = {
+  video: {
+    width: { min: 640, ideal: 1920, max: 1920 },
+    height: { min: 480, ideal: 1080, max: 1080 },
+  },
+  audio: true,
+};
+
+const init_webrtc = async () => {
+  localStream = await navigator.mediaDevices.getUserMedia(videoParams);
+  console.log("init_webrtc", localStream);
+  document.getElementById("user-1").srcObject = localStream;
+};
+
+const createPeerConnection = async () => {
+  peerConnection = new RTCPeerConnection(servers);
+
+  remoteStream = new MediaStream();
+  document.getElementById("user-2").srcObject = remoteStream;
+  document.getElementById("user-2").style.display = "block";
+
+  document.getElementById("user-1").classList.add("smallFrame");
+
+  if (!localStream) await init_webrtc();
+
+  localStream.getTracks().forEach((track) => {
+    peerConnection.addTrack(track, localStream);
   });
 
-  // Create an offer and send it to the other peer.
-  const offer = await peerConnection.createOffer();
-  peerConnection.setLocalDescription(offer);
-  await sendOfferToOtherPeer(offer);
+  peerConnection.ontrack = (event) => {
+    event.streams[0].getTracks().forEach((track) => {
+      remoteStream.addTrack(track);
+    });
+  };
+
+  peerConnection.onicecandidate = async (event) => {
+    if (event.candidate) {
+      signalingChannel.push("ice_candidate", {
+        candidate: event.candidate,
+        sender: window.user,
+      });
+    }
+  };
 };
 
-peerConnection.onicecandidate = async (event) => {
-  // Send the ICE candidate to the other peer.
-  if (event.candidate) {
-    await sendIceCandidateToOtherPeer(event.candidate);
+const createOffer = async () => {
+  console.log("create offer");
+  await createPeerConnection();
+
+  let offer = await peerConnection.createOffer();
+  await peerConnection.setLocalDescription(offer);
+
+  signalingChannel.push("offer", { offer: offer, sender: window.user });
+};
+
+const createAnswer = async (offer) => {
+  console.log("create answer");
+  await createPeerConnection();
+
+  await peerConnection.setRemoteDescription(offer);
+
+  let answer = await peerConnection.createAnswer();
+  await peerConnection.setLocalDescription(answer);
+
+  signalingChannel.push("answer", { answer: answer, sender: window.user });
+};
+
+const addAnswer = async (answer) => {
+  if (!peerConnection.currentRemoteDescription) {
+    peerConnection.setRemoteDescription(answer);
   }
 };
 
-peerConnection.ontrack = async (event) => {
-   // Add the remote video stream to the DOM.
-  remoteVideo.srcObject = event.streams[0];
+if (callBtn)
+  callBtn.addEventListener("click", (_event) => {
+    if (callAllowed) createOffer();
+  });
+
+if (leaveBtn)
+  leaveBtn.addEventListener("click", (_event) => {
+    if (inCall) console.log("hang up");
+  });
+
+const toggleCamera = async (_event) => {
+  let videoTrack = localStream
+    .getTracks()
+    .find((track) => track.kind === "video");
+
+  if (videoTrack.enabled) {
+    videoTrack.enabled = false;
+    cameraBtn.style.backgroundColor = "rgb(255, 80, 80)";
+  } else {
+    videoTrack.enabled = true;
+    cameraBtn.style.backgroundColor = "rgb(179, 102, 249, .9)";
+  }
 };
 
-async function sendOfferToOtherPeer(offer) {
-  // Send the offer to the other peer
-  signalingChannel.push("offer", offer);
-}
+const toggleMic = async () => {
+  let audioTrack = localStream
+    .getTracks()
+    .find((track) => track.kind === "audio");
 
-async function sendAnswerToOtherPeer(answer) {
-  // Send the answer to the other peer
-  signalingChannel.push("answer", answer);
-}
+  if (audioTrack.enabled) {
+    audioTrack.enabled = false;
+    micBtn.style.backgroundColor = "rgb(255, 80, 80)";
+  } else {
+    audioTrack.enabled = true;
+    micBtn.style.backgroundColor = "rgb(179, 102, 249, .9)";
+  }
+};
 
-async function sendIceCandidateToOtherPeer(candidate) {
-  // Send the ICE candidate to the other peer
-  signalingChannel.push("ice_candidate", candidate);
-}
+if (cameraBtn) cameraBtn.addEventListener("click", toggleCamera);
+if (micBtn) micBtn.addEventListener("click", toggleMic);
 
-// Add click event listeners to call and hangup buttons
-if(callButton !== null) callButton.addEventListener("click", () => {
-  // You can initiate the call here, e.g., when the "Call" button is clicked
-  peerConnection.onnegotiationneeded();
-});
-
-if(hangupButton !== null) hangupButton.addEventListener("click", () => {
-  // You can end the call here, e.g., when the "Hang Up" button is clicked
-  peerConnection.close();
-  localVideo.srcObject = null;
-  remoteVideo.srcObject = null;
-});
-
-export default socket
+export default socket;

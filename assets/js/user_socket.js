@@ -144,6 +144,20 @@ const videoParams = {
   audio: true,
 };
 
+const enableLeaveBtn = (status) => {
+  if (status === "on") {
+    leaveBtn.classList.remove("disabled");
+    callBtn.classList.add("disabled");
+    inCall = true;
+    callAllowed = false;
+  } else if (status === "off") {
+    leaveBtn.classList.add("disabled");
+    callBtn.classList.remove("disabled");
+    inCall = false;
+    callAllowed = true;
+  }
+};
+
 const init_webrtc = async () => {
   localStream = await navigator.mediaDevices.getUserMedia(videoParams);
   console.log("init_webrtc", localStream);
@@ -189,6 +203,8 @@ const createOffer = async () => {
   await peerConnection.setLocalDescription(offer);
 
   signalingChannel.push("offer", { offer: offer, sender: window.user });
+
+  enableLeaveBtn("on");
 };
 
 const createAnswer = async (offer) => {
@@ -201,12 +217,33 @@ const createAnswer = async (offer) => {
   await peerConnection.setLocalDescription(answer);
 
   signalingChannel.push("answer", { answer: answer, sender: window.user });
+
+  enableLeaveBtn("on");
 };
 
 const addAnswer = async (answer) => {
   if (!peerConnection.currentRemoteDescription) {
     peerConnection.setRemoteDescription(answer);
   }
+};
+
+const hangup = async () => {
+  if (peerConnection) {
+    peerConnection.close();
+  }
+
+  // Stop all local media tracks
+  if (localStream) {
+    localStream.getTracks().forEach((track) => {
+      track.stop();
+    });
+  }
+
+  enableLeaveBtn("off");
+
+  // Remove the video streams from the UI
+  document.getElementById("user-1").srcObject = null;
+  document.getElementById("user-2").srcObject = null;
 };
 
 if (callBtn)
@@ -216,7 +253,7 @@ if (callBtn)
 
 if (leaveBtn)
   leaveBtn.addEventListener("click", (_event) => {
-    if (inCall) console.log("hang up");
+    if (inCall) hangup();
   });
 
 const toggleCamera = async (_event) => {

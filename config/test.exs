@@ -52,4 +52,3 @@ config :idisclose, :file_storage,
   local_path: "priv/data",
   # Default region for S3 implementation
   region: ""
-

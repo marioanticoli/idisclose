@@ -104,7 +104,9 @@ jobs:
       run: mix dialyzer --format short
 
     - name: Run tests
-      run: mix test
+      run: mix coveralls.json
+      env:
+        MIX_ENV: test
 
     - name: Upload coverage reports to Codecov
       if: always()

@@ -4,24 +4,27 @@ defmodule IdiscloseWeb.SignalingChannelTest do
   setup do
     {:ok, _, socket} =
       IdiscloseWeb.UserSocket
-      |> socket("user_id", %{some: :assign})
+      |> socket("user_id", %{user: "test_user"})
       |> subscribe_and_join(IdiscloseWeb.SignalingChannel, "signaling:lobby")
 
     %{socket: socket}
   end
 
-  test "ping replies with status ok", %{socket: socket} do
-    ref = push(socket, "ping", %{"hello" => "there"})
-    assert_reply ref, :ok, %{"hello" => "there"}
+  test "offer replies with status ok", %{socket: socket} do
+    payload = %{"hello" => "there"}
+    push(socket, "offer", payload)
+    assert_broadcast("offer", ^payload)
   end
 
-  test "shout broadcasts to signaling:lobby", %{socket: socket} do
-    push(socket, "shout", %{"hello" => "all"})
-    assert_broadcast "shout", %{"hello" => "all"}
+  test "answer replies with status ok", %{socket: socket} do
+    payload = %{"hello" => "there"}
+    push(socket, "answer", payload)
+    assert_broadcast("answer", ^payload)
   end
 
-  test "broadcasts are pushed to the client", %{socket: socket} do
-    broadcast_from!(socket, "broadcast", %{"some" => "data"})
-    assert_push "broadcast", %{"some" => "data"}
+  test "candidate replies with status ok", %{socket: socket} do
+    payload = %{"hello" => "there"}
+    push(socket, "ice_candidate", payload)
+    assert_broadcast("ice_candidate", ^payload)
   end
 end

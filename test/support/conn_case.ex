@@ -45,7 +45,10 @@ defmodule IdiscloseWeb.ConnCase do
   test context.
   """
   def register_and_log_in_user(%{conn: conn}) do
-    user = Idisclose.AccountsFixtures.user_fixture()
+    {:ok, user} =
+      Idisclose.AccountsFixtures.user_fixture()
+      |> Idisclose.Accounts.update_user_role(%{role: :admin})
+
     %{conn: log_in_user(conn, user), user: user}
   end
 

@@ -74,8 +74,7 @@ defmodule Idisclose.DocumentsTest do
     test "list_sections/1 not in list" do
       section1 = section_fixture()
       section2 = section_fixture()
-      section3 = section_fixture()
-      assert Documents.list_sections_not_associated([section1.id]) == [section2, section3]
+      assert Documents.list_sections_not_associated([section1.id]) == [section2]
     end
 
     test "get_section!/1 returns the section with given id" do

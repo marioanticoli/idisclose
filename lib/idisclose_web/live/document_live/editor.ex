@@ -5,7 +5,7 @@ defmodule IdiscloseWeb.DocumentLive.Editor do
   import Idisclose.Utils.Liveview, only: [put_error: 2]
 
   alias Idisclose.Documents
-  alias Idisclose.PieceTableFacade, as: PieceTable
+  alias Idisclose.PieceTableFacade.Impl, as: PieceTable
   alias Idisclose.Documents.Chapter
 
   @impl true

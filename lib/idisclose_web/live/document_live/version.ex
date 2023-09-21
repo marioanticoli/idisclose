@@ -2,7 +2,7 @@ defmodule IdiscloseWeb.DocumentLive.Version do
   use IdiscloseWeb, :live_view
 
   alias Idisclose.Documents
-  alias Idisclose.PieceTableFacade, as: Facade
+  alias Idisclose.PieceTableFacade.Impl, as: Facade
 
   @impl true
   def mount(_params, _session, socket) do

@@ -330,9 +330,7 @@ defmodule Idisclose.Documents do
   end
 
   @doc """
-  Gets a single document.
-
-  Raises `Ecto.NoResultsError` if the Document does not exist.
+  Gets a single document or nil.
 
   ## Examples
 
@@ -340,7 +338,7 @@ defmodule Idisclose.Documents do
       %Document{}
 
       iex> get_document!(456)
-      ** (Ecto.NoResultsError)
+      nil
 
   """
   def get_document!(id) do

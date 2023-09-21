@@ -13,7 +13,7 @@ defmodule Idisclose.Documents.Document do
   schema "documents" do
     field(:deadline, :date)
     field(:title, :string)
-    field(:archived?, :boolean)
+    field(:archived?, :boolean, default: false)
 
     belongs_to(:template, Template)
     has_many(:chapters, Chapter)

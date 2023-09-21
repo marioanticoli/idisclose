@@ -80,7 +80,7 @@ defmodule IdiscloseWeb.DocumentLive.Show do
 
   defp generate_pdf(chapters, filename) do
     Enum.flat_map(chapters, fn chapter ->
-      body = Idisclose.PieceTableFacade.get_text!(chapter.document_id, chapter.id)
+      body = Idisclose.PieceTableFacade.Impl.get_text!(chapter.document_id, chapter.id)
       [wrap_html(chapter.title, "h1"), body]
     end)
     |> IO.iodata_to_binary()

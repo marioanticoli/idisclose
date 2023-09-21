@@ -1,24 +1,29 @@
-defmodule Idisclose.PieceTableFacade do
+defmodule Idisclose.PieceTableFacade.Impl do
+  @behaviour Idisclose.PieceTableFacade
+
   @moduledoc """
-  Facade to simplify intereaction with the PieceTable library
+  PieceTableFacade implementation
   """
 
   alias Idisclose.FileStorage.Fs
 
   # delegate the execution to PieceTable library
+  @impl true
   defdelegate new!(text), to: PieceTable
+
+  @impl true
   defdelegate diff!(table, text, user), to: PieceTable.Differ
+
+  @impl true
   defdelegate diff(table, text, user), to: PieceTable.Differ
+
+  @impl true
   defdelegate undo!(table), to: PieceTable
+
+  @impl true
   defdelegate redo!(table), to: PieceTable
 
-  @type template :: %{
-          ins: String.t(),
-          del: String.t(),
-          edit: String.t()
-        }
-
-  @spec load(String.t(), String.t()) :: {:ok, PieceTable.t()} | {:error, any()}
+  @impl true
   def load(document_id, chapter_id) do
     with {:ok, raw_content} <- Fs.file_read(document_id, chapter_id),
          {:ok, params} <- Jason.decode(raw_content, keys: :atoms) do
@@ -41,7 +46,7 @@ defmodule Idisclose.PieceTableFacade do
     struct(PieceTable.Change, change)
   end
 
-  @spec get_text!(String.t(), String.t()) :: binary()
+  @impl true
   def get_text!(document_id, chapter_id) do
     case load(document_id, chapter_id) do
       {:ok, table} ->
@@ -54,8 +59,7 @@ defmodule Idisclose.PieceTableFacade do
     end
   end
 
-  @spec save(PieceTable.t(), String.t(), String.t()) ::
-          {:ok, PieceTable.t()} | {:error, PieceTable.t()}
+  @impl true
   def save(table, document_id, chapter_id) do
     with :ok <- maybe_mkdir(document_id),
          {:ok, raw_content} <- table |> map_from_struct() |> Jason.encode(),
@@ -86,7 +90,7 @@ defmodule Idisclose.PieceTableFacade do
     end
   end
 
-  @spec diff_string(atom(), PieceTable.t(), template()) :: {PieceTable.t(), String.t()}
+  @impl true
   # no changes, do nothing
   def diff_string(:prev, %{applied: [], result: result} = table, _), do: {table, result}
   def diff_string(:next, %{to_apply: [], result: result} = table, _), do: {table, result}

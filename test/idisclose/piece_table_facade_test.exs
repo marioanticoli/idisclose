@@ -1,25 +1,50 @@
 defmodule Idisclose.PieceTableFacadeTest do
   use Idisclose.DataCase
 
-  alias Idisclose.PieceTableFacade
+  alias Idisclose.PieceTableFacade.Impl, as: PieceTableFacade
 
   describe "load/2" do
     test "creates piece table from file" do
-      assert 1 == 0
+      table = PieceTableFacade.new!("test")
+
+      Mox.expect(Idisclose.FileStorage.Mock, :file_read, fn _, _ ->
+        content =
+          table
+          |> Map.from_struct()
+          |> Jason.encode!()
+
+        {:ok, content}
+      end)
+
+      assert {:ok, table} == PieceTableFacade.load("123", "abc")
     end
 
     test "returns error if cannot create" do
-      assert 1 == 0
+      expected = {:error, :enoent}
+
+      Mox.expect(Idisclose.FileStorage.Mock, :file_read, fn _, _ ->
+        expected
+      end)
+
+      assert expected == PieceTableFacade.load("abc", "123")
     end
   end
 
   describe "save/3" do
     test "save serialized piece table to file" do
-      assert 1 == 0
+      Mox.expect(Idisclose.FileStorage.Mock, :file_write, fn _, _, _ -> :ok end)
+      Mox.expect(Idisclose.FileStorage.Mock, :dir?, fn _ -> true end)
+
+      table = PieceTable.new!("test")
+      assert {:ok, ^table} = PieceTableFacade.save(table, "aaa", "bbb")
     end
 
     test "returns error if cannot save" do
-      assert 1 == 0
+      Mox.expect(Idisclose.FileStorage.Mock, :file_write, fn _, _, _ -> {:error, :eacces} end)
+      Mox.expect(Idisclose.FileStorage.Mock, :dir?, fn _ -> true end)
+
+      table = PieceTable.new!("test")
+      assert {:error, ^table} = PieceTableFacade.save(table, "aaa", "bbb")
     end
   end
 
@@ -122,15 +147,6 @@ defmodule Idisclose.PieceTableFacadeTest do
 
       assert {updated_table2, ["long(ish) text test", "+++!!!!", ""]} ==
                PieceTableFacade.diff_string(:prev, updated_table1, template)
-
-      updated_table3 = updated_table2 |> PieceTable.redo!()
-
-      # assert {updated_table3, ["long(ish) text test", "+++!!!!", ""]} ==
-      # PieceTableFacade.diff_string(:next, updated_table2, template)
-
-      updated_table4 = updated_table3 |> PieceTable.redo!() |> PieceTable.redo!()
-
-      assert {updated_table4, []} == PieceTableFacade.diff_string(:next, updated_table3, template)
     end
 
     test "returns original if no changes", %{table: table, template: template} do

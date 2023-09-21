@@ -12,7 +12,7 @@ defmodule Idisclose.MixProject do
       deps: deps(),
       # Make Phoenix not compile on warnings
       elixirc_options: [warnings_as_errors: true],
-      test_coverage: [tool: Coverex.Task]
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 
@@ -65,7 +65,7 @@ defmodule Idisclose.MixProject do
       # static analysis - security
       {:sobelow, "~> 0.12.2"},
       # test coverage 
-      {:coverex, "~> 1.5", only: :test},
+      {:excoveralls, "~> 0.17.1", only: [:test]},
       # HTML to PDF 
       {:pdf_generator, "~> 0.6.2"},
       # my PieceTable implementation 

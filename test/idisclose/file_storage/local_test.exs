@@ -1,7 +1,7 @@
-defmodule Idisclose.FileStorageTest do
+defmodule Idisclose.FileStorage.LocalTest do
   use Idisclose.DataCase
 
-  alias Idisclose.FileStorage.Local, as: FS
+  alias Idisclose.FileStorage.Local
 
   describe "file_read/2" do
     test "returns file content if file exists" do
@@ -16,11 +16,11 @@ defmodule Idisclose.FileStorageTest do
       |> Path.join(filename)
       |> File.write!(text)
 
-      assert {:ok, text} == FS.file_read(path, filename)
+      assert {:ok, text} == Local.file_read(path, filename)
     end
 
     test "returns error if cannot read file" do
-      assert {:error, _} = FS.file_read(Ecto.UUID.generate(), Ecto.UUID.generate())
+      assert {:error, _} = Local.file_read(Ecto.UUID.generate(), Ecto.UUID.generate())
     end
   end
 
@@ -34,14 +34,14 @@ defmodule Idisclose.FileStorageTest do
       |> Path.join(path)
       |> File.mkdir()
 
-      assert :ok == FS.file_write(path, filename, content)
-      assert {:ok, content} == FS.file_read(path, filename)
+      assert :ok == Local.file_write(path, filename, content)
+      assert {:ok, content} == Local.file_read(path, filename)
     end
 
     test "returns error if cannot write" do
       path = System.tmp_dir!() |> Path.join(Ecto.UUID.generate())
 
-      assert {:error, _} = FS.file_write(path, Ecto.UUID.generate(), "fail")
+      assert {:error, _} = Local.file_write(path, Ecto.UUID.generate(), "fail")
     end
   end
 
@@ -53,21 +53,21 @@ defmodule Idisclose.FileStorageTest do
       |> Path.join(dir)
       |> File.mkdir()
 
-      assert FS.dir?(dir)
+      assert Local.dir?(dir)
     end
 
     test "returns false if dir doesn't exist" do
-      refute Ecto.UUID.generate() |> FS.dir?()
+      refute Ecto.UUID.generate() |> Local.dir?()
     end
   end
 
   describe "mkdir/1" do
     test "creates dir" do
-      assert :ok = Ecto.UUID.generate() |> FS.mkdir()
+      assert :ok = Ecto.UUID.generate() |> Local.mkdir()
     end
 
     test "fails to create dir" do
-      assert {:error, _} = Ecto.UUID.generate() |> Path.join("/doesnt_exist") |> FS.mkdir()
+      assert {:error, _} = Ecto.UUID.generate() |> Path.join("/doesnt_exist") |> Local.mkdir()
     end
   end
 end

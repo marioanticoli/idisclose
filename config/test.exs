@@ -42,6 +42,15 @@ config :phoenix, :plug_init_mode, :runtime
 config :idisclose, Oban, testing: :inline
 
 ########################
+# S3
+########################
+
+config :ex_aws, :s3,
+  scheme: "http://",
+  host: "localhost",
+  port: 8765
+
+########################
 # FileStorage
 ########################
 

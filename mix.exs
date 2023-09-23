@@ -79,7 +79,8 @@ defmodule Idisclose.MixProject do
       {:ex_aws_s3, "~> 2.4"},
       {:hackney, "~> 1.18"},
       # mocks 
-      {:mox, "~> 1.1", only: :test}
+      {:mox, "~> 1.1", only: :test},
+      {:bypass, "~> 2.1", only: :test}
     ]
   end
 

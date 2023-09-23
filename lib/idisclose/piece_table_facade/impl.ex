@@ -104,35 +104,36 @@ defmodule Idisclose.PieceTableFacade.Impl do
       ) do
     %{result: result} = table = table |> PieceTable.undo!() |> PieceTable.undo!()
 
-    {table, build_string_list(result, template, [edit1, edit2])}
+    {table, build_string_list(result, template, [edit1, edit2], :prev)}
   end
 
   def diff_string(
         :next,
-        %{applied: [%{position: position} = edit1, %{position: position} = edit2 | _rest]} =
+        %{to_apply: [%{position: position} = edit1, %{position: position} = edit2 | _rest]} =
           table,
         template
       ) do
     %{result: result} = table = table |> PieceTable.redo!() |> PieceTable.redo!()
 
-    {table, build_string_list(result, template, [edit1, edit2])}
+    {table, build_string_list(result, template, [edit1, edit2], :next)}
   end
 
   # insert or delete
   def diff_string(:prev, %{applied: [edit | _]} = table, template) do
     %{result: result} = table = PieceTable.undo!(table)
 
-    {table, build_string_list(result, template, edit)}
+    {table, build_string_list(result, template, edit, :prev)}
   end
 
   def diff_string(:next, %{to_apply: [edit | _]} = table, template) do
     result = PieceTable.get_text!(table)
     table = PieceTable.redo!(table)
 
-    {table, build_string_list(result, template, edit)}
+    {table, build_string_list(result, template, edit, :next)}
   end
 
-  defp build_string_list(result, template, %{change: :ins} = edit) do
+  # insertion
+  defp build_string_list(result, template, %{change: :ins} = edit, _) do
     [
       String.slice(result, 0, edit.position),
       build_from_template([edit.text], template.ins),
@@ -140,7 +141,8 @@ defmodule Idisclose.PieceTableFacade.Impl do
     ]
   end
 
-  defp build_string_list(result, template, %{change: :del} = edit) do
+  # deletion
+  defp build_string_list(result, template, %{change: :del} = edit, _) do
     next_pos = edit.position + String.length(edit.text)
 
     [
@@ -150,9 +152,10 @@ defmodule Idisclose.PieceTableFacade.Impl do
     ]
   end
 
-  defp build_string_list(result, template, edits) do
+  # edit
+  defp build_string_list(result, template, edits, direction) do
     %{del: [del], ins: [ins]} = Enum.group_by(edits, & &1.change)
-    next_pos = del.position + String.length(del.text)
+    next_pos = calc_position_on_edit(direction, del, ins)
 
     [
       String.slice(result, 0, del.position),
@@ -160,6 +163,10 @@ defmodule Idisclose.PieceTableFacade.Impl do
       String.slice(result, next_pos..-1)
     ]
   end
+
+  # next position changes if moving forward or backward
+  defp calc_position_on_edit(:prev, del, _ins), do: del.position + String.length(del.text)
+  defp calc_position_on_edit(:next, del, ins), do: del.position + String.length(ins.text)
 
   # interpolate text
   defp build_from_template(values, template) when is_list(values),

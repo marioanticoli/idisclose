@@ -126,6 +126,61 @@ defmodule Idisclose.DocumentsTest do
       section = section_fixture()
       assert %Ecto.Changeset{} = Documents.change_section(section)
     end
+
+    test "list_sections_not_associated/1 lists sections not included in list" do
+      s1 = section_fixture()
+      s2 = section_fixture()
+      s3 = section_fixture()
+
+      assert MapSet.new([s1, s2]) ==
+               Documents.list_sections_not_associated([s3.id]) |> MapSet.new()
+    end
+  end
+
+  describe "SectionTemplate" do
+    alias Idisclose.Documents.SectionTemplate
+
+    import Idisclose.DocumentsFixtures
+
+    test "create_section_template/1 with valid data creates an association" do
+      %{id: section_id} = section_fixture()
+      %{id: template_id} = template_fixture()
+
+      assert {:ok, %SectionTemplate{section_id: ^section_id, template_id: ^template_id, order: 0}} =
+               Documents.create_section_template(%{
+                 section_id: section_id,
+                 template_id: template_id,
+                 order: 0
+               })
+    end
+
+    test "create_section_template/1 with invalid data returns a changeset" do
+      %{id: section_id} = section_fixture()
+      %{id: template_id} = template_fixture()
+
+      assert {:error, %Ecto.Changeset{valid?: false}} =
+               Documents.create_section_template(%{
+                 section_id: section_id,
+                 template_id: template_id,
+                 order: -1
+               })
+    end
+
+    test "delete_section_template/2 deletes association if exists" do
+      st = section_template_fixture()
+      assert :ok = Documents.delete_section_template(st.section_id, st.template_id)
+    end
+
+    test "delete_section_template/2 returns error when association not found" do
+      assert :error =
+               Documents.delete_section_template(Ecto.UUID.generate(), Ecto.UUID.generate())
+    end
+
+    test "change_section_template/1 returns an association changeset" do
+      st = section_template_fixture()
+
+      assert %Ecto.Changeset{} = Documents.change_section_template(st)
+    end
   end
 
   describe "documents" do
@@ -138,6 +193,12 @@ defmodule Idisclose.DocumentsTest do
     test "list_documents/0 returns all documents" do
       document = document_fixture() |> Repo.preload(:template)
       assert Documents.list_documents() == [document]
+    end
+
+    test "list_documents/0 returns all documents with preloads" do
+      preloads = [template: :sections]
+      document = document_fixture() |> Repo.preload(preloads)
+      assert Documents.list_documents(preloads) == [document]
     end
 
     test "get_document!/1 returns the document with given id" do
@@ -246,6 +307,31 @@ defmodule Idisclose.DocumentsTest do
     test "change_chapter/1 returns a chapter changeset" do
       chapter = chapter_fixture()
       assert %Ecto.Changeset{} = Documents.change_chapter(chapter)
+    end
+
+    test "create_document_chapters/1 returns " do
+      %{id: section_id1} = section_fixture()
+      %{id: section_id2} = section_fixture()
+      template = template_fixture()
+
+      Documents.create_section_template(%{
+        section_id: section_id1,
+        template_id: template.id,
+        order: 0
+      })
+
+      Documents.create_section_template(%{
+        section_id: section_id2,
+        template_id: template.id,
+        order: 1
+      })
+
+      document =
+        document_fixture(%{template_id: template.id})
+        |> Repo.preload(template: :sections)
+
+      assert {:ok, %{^section_id1 => %Documents.Chapter{}, ^section_id2 => %Documents.Chapter{}}} =
+               Documents.create_document_chapters(document)
     end
   end
 end

@@ -72,4 +72,23 @@ defmodule Idisclose.DocumentsFixtures do
 
     chapter
   end
+
+  @doc """
+  Generate an association between section and template
+  """
+  def section_template_fixture(attrs \\ %{}) do
+    section = section_fixture()
+    template = template_fixture()
+
+    {:ok, section_template} =
+      attrs
+      |> Enum.into(%{
+        template_id: template.id,
+        section_id: section.id,
+        order: 0
+      })
+      |> Idisclose.Documents.create_section_template()
+
+    section_template
+  end
 end

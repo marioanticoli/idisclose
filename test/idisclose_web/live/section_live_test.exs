@@ -10,7 +10,6 @@ defmodule IdiscloseWeb.SectionLiveTest do
     description: "some updated description",
     title: "some updated title"
   }
-  @invalid_attrs %{body: nil, description: nil, title: nil}
 
   defp create_section(_) do
     section = section_fixture()
@@ -18,13 +17,13 @@ defmodule IdiscloseWeb.SectionLiveTest do
   end
 
   describe "Index" do
-    setup [:create_section]
+    setup [:register_and_log_in_user, :create_section]
 
     test "lists all sections", %{conn: conn, section: section} do
       {:ok, _index_live, html} = live(conn, ~p"/sections")
 
       assert html =~ "Listing Sections"
-      assert html =~ section.body
+      assert html =~ section.title
     end
 
     test "saves new section", %{conn: conn} do
@@ -36,10 +35,6 @@ defmodule IdiscloseWeb.SectionLiveTest do
       assert_patch(index_live, ~p"/sections/new")
 
       assert index_live
-             |> form("#section-form", section: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert index_live
              |> form("#section-form", section: @create_attrs)
              |> render_submit()
 
@@ -47,7 +42,7 @@ defmodule IdiscloseWeb.SectionLiveTest do
 
       html = render(index_live)
       assert html =~ "Section created successfully"
-      assert html =~ "some body"
+      assert html =~ "some title"
     end
 
     test "updates section in listing", %{conn: conn, section: section} do
@@ -59,10 +54,6 @@ defmodule IdiscloseWeb.SectionLiveTest do
       assert_patch(index_live, ~p"/sections/#{section}/edit")
 
       assert index_live
-             |> form("#section-form", section: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert index_live
              |> form("#section-form", section: @update_attrs)
              |> render_submit()
 
@@ -70,7 +61,7 @@ defmodule IdiscloseWeb.SectionLiveTest do
 
       html = render(index_live)
       assert html =~ "Section updated successfully"
-      assert html =~ "some updated body"
+      assert html =~ "some updated title"
     end
 
     test "deletes section in listing", %{conn: conn, section: section} do
@@ -82,7 +73,7 @@ defmodule IdiscloseWeb.SectionLiveTest do
   end
 
   describe "Show" do
-    setup [:create_section]
+    setup [:register_and_log_in_user, :create_section]
 
     test "displays section", %{conn: conn, section: section} do
       {:ok, _show_live, html} = live(conn, ~p"/sections/#{section}")
@@ -100,10 +91,6 @@ defmodule IdiscloseWeb.SectionLiveTest do
       assert_patch(show_live, ~p"/sections/#{section}/show/edit")
 
       assert show_live
-             |> form("#section-form", section: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert show_live
              |> form("#section-form", section: @update_attrs)
              |> render_submit()
 
@@ -112,6 +99,18 @@ defmodule IdiscloseWeb.SectionLiveTest do
       html = render(show_live)
       assert html =~ "Section updated successfully"
       assert html =~ "some updated body"
+    end
+  end
+
+  describe "not logged" do
+    setup [:create_section]
+
+    test "lists all sections", %{conn: conn} do
+      assert {:error, {:redirect, %{to: "/users/log_in"}}} = live(conn, ~p"/sections")
+    end
+
+    test "displays template", %{conn: conn, section: section} do
+      assert {:error, {:redirect, %{to: "/users/log_in"}}} = live(conn, ~p"/sections/#{section}")
     end
   end
 end

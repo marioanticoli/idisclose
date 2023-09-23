@@ -14,7 +14,7 @@ defmodule IdiscloseWeb.TemplateLiveTest do
   end
 
   describe "Index" do
-    setup [:create_template]
+    setup [:register_and_log_in_user, :create_template]
 
     test "lists all templates", %{conn: conn, template: template} do
       {:ok, _index_live, html} = live(conn, ~p"/templates")
@@ -78,7 +78,7 @@ defmodule IdiscloseWeb.TemplateLiveTest do
   end
 
   describe "Show" do
-    setup [:create_template]
+    setup [:register_and_log_in_user, :create_template]
 
     test "displays template", %{conn: conn, template: template} do
       {:ok, _show_live, html} = live(conn, ~p"/templates/#{template}")
@@ -108,6 +108,19 @@ defmodule IdiscloseWeb.TemplateLiveTest do
       html = render(show_live)
       assert html =~ "Template updated successfully"
       assert html =~ "some updated description"
+    end
+  end
+
+  describe "not logged" do
+    setup [:create_template]
+
+    test "lists all templates", %{conn: conn} do
+      assert {:error, {:redirect, %{to: "/users/log_in"}}} = live(conn, ~p"/templates")
+    end
+
+    test "displays template", %{conn: conn, template: template} do
+      assert {:error, {:redirect, %{to: "/users/log_in"}}} =
+               live(conn, ~p"/templates/#{template}")
     end
   end
 end

@@ -16,7 +16,7 @@ defmodule Idisclose.Documents.Document do
     field(:archived?, :boolean, default: false)
 
     belongs_to(:template, Template)
-    has_many(:chapters, Chapter)
+    has_many(:chapters, Chapter, on_delete: :delete_all)
 
     timestamps()
   end

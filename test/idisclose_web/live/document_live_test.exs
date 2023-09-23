@@ -10,7 +10,8 @@ defmodule IdiscloseWeb.DocumentLiveTest do
 
   defp create_document(_) do
     document = document_fixture()
-    %{document: document}
+    chapter = chapter_fixture(%{document_id: document.id})
+    %{chapter: chapter, document: document}
   end
 
   describe "Index" do
@@ -75,6 +76,43 @@ defmodule IdiscloseWeb.DocumentLiveTest do
       assert index_live |> element("#documents-#{document.id} a", "Delete") |> render_click()
       refute has_element?(index_live, "#documents-#{document.id}")
     end
+
+    test "load chapter", %{conn: conn, chapter: chapter} do
+      content = File.read!("test/support/fixtures/support_files/piece_table")
+
+      Mox.expect(Idisclose.FileStorage.Mock, :file_read, 2, fn _, _ ->
+        {:ok, content}
+      end)
+
+      {:ok, _index_live, html} =
+        live(conn, ~p"/documents/#{chapter.document_id}/chapter/#{chapter.id}")
+
+      assert html =~ "Save Document"
+    end
+
+    test "fail to load chapter doesn't crash", %{conn: conn, chapter: chapter} do
+      Mox.expect(Idisclose.FileStorage.Mock, :file_read, 2, fn _, _ ->
+        {:error, :enoent}
+      end)
+
+      {:ok, _index_live, html} =
+        live(conn, ~p"/documents/#{chapter.document_id}/chapter/#{chapter.id}")
+
+      assert html =~ "Save Document"
+    end
+
+    test "compare changes in chapter", %{conn: conn, chapter: chapter} do
+      content = File.read!("test/support/fixtures/support_files/piece_table")
+
+      Mox.expect(Idisclose.FileStorage.Mock, :file_read, 2, fn _, _ ->
+        {:ok, content}
+      end)
+
+      {:ok, _index_live, html} =
+        live(conn, ~p"/documents/#{chapter.document_id}/chapter/#{chapter.id}/compare")
+
+      assert html =~ "Select this version"
+    end
   end
 
   describe "Show" do
@@ -90,7 +128,7 @@ defmodule IdiscloseWeb.DocumentLiveTest do
     test "updates document within modal", %{conn: conn, document: document} do
       {:ok, show_live, _html} = live(conn, ~p"/documents/#{document}")
 
-      assert show_live |> element("a", "Edit") |> render_click() =~
+      assert show_live |> element("a", "Edit document") |> render_click() =~
                "Edit Document"
 
       assert_patch(show_live, ~p"/documents/#{document}/show/edit")

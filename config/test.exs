@@ -49,6 +49,6 @@ config :idisclose, :file_storage,
   # To use S3 change to Idisclose.FileStorage.S3
   impl: Idisclose.FileStorage.Mock,
   # Default path for Local implementation
-  local_path: "priv/data",
+  local_path: System.tmp_dir!(),
   # Default region for S3 implementation
   region: ""

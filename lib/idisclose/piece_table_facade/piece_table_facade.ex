@@ -11,7 +11,7 @@ defmodule Idisclose.PieceTableFacade do
 
   @callback new!(String.t()) :: PieceTable.t()
   @callback diff!(PieceTable.Differ.original_input(), String.t(), any()) :: PieceTable.t()
-  @callback diff(PieceTable.Differ.original_input(), Strin.t(), any()) ::
+  @callback diff(PieceTable.Differ.original_input(), String.t(), any()) ::
               {:ok, PieceTable.t()} | {:error, atom()}
   @callback undo!(PieceTable.t()) :: PieceTable.t()
   @callback redo!(PieceTable.t()) :: PieceTable.t()

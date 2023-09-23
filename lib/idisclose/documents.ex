@@ -513,19 +513,18 @@ defmodule Idisclose.Documents do
     Chapter.changeset(chapter, attrs)
   end
 
-  def create_document_chapters(%Document{} = document) do
+  def create_document_chapters(%Document{template: %{id: template_id}} = document) do
     section_ids = Enum.map(document.template.sections, & &1.id)
 
-    sections =
-      from(
-        st in SectionTemplate,
-        join: s in assoc(st, :section),
-        where: s.id in ^section_ids,
-        select: %{s | order: st.order}
-      )
-      |> Repo.all()
-
-    Enum.reduce(sections, Ecto.Multi.new(), fn section, multi ->
+    from(
+      st in SectionTemplate,
+      join: s in assoc(st, :section),
+      where: s.id in ^section_ids,
+      where: st.template_id == ^template_id,
+      select: %{s | order: st.order}
+    )
+    |> Repo.all()
+    |> Enum.reduce(Ecto.Multi.new(), fn section, multi ->
       attrs = %{
         title: section.title,
         body: section.body,

@@ -33,6 +33,12 @@ defmodule IdiscloseWeb.SignalingChannel do
     {:noreply, socket}
   end
 
+  # Catch-all clause
+  @impl true
+  def handle_in(_, _payload, socket) do
+    {:noreply, socket}
+  end
+
   # Generic message receiver
   @impl true
   def handle_info(:after_join, socket) do

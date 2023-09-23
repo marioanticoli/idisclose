@@ -42,6 +42,15 @@ config :phoenix, :plug_init_mode, :runtime
 config :idisclose, Oban, testing: :inline
 
 ########################
+# S3
+########################
+
+config :ex_aws, :s3,
+  scheme: "http://",
+  host: "localhost",
+  port: 8765
+
+########################
 # FileStorage
 ########################
 
@@ -49,6 +58,6 @@ config :idisclose, :file_storage,
   # To use S3 change to Idisclose.FileStorage.S3
   impl: Idisclose.FileStorage.Mock,
   # Default path for Local implementation
-  local_path: "priv/data",
+  local_path: System.tmp_dir!(),
   # Default region for S3 implementation
   region: ""
